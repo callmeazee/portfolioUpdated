@@ -12,7 +12,12 @@ import type { Contact } from "@/types/content";
  * the contact page if that is wanted.
  */
 export const contact: Contact = {
-  email: "azeezahmedkhan@gmail.com",
+  /*
+   * Corrected 2026-09-02 on the subject's instruction. Note this differs from
+   * the supplied résumé, which reads "azeezahmedkhan@gmail.com" (no second
+   * "e") — the résumé PDF is worth correcting too.
+   */
+  email: "azeezahemedkhan@gmail.com",
   phone: "+91 7724066665",
   github: { status: "available", url: "https://github.com/callmeazee" },
   linkedin: { status: "available", url: "https://linkedin.com/in/azeez222" },
