@@ -61,11 +61,19 @@ for (const theme of THEMES) {
       expect(new URL(page.url()).pathname).toBe("/projects/besties");
     });
 
-    test(`unknown routes 404 rather than rendering an empty shell`, async ({ page }) => {
+    test(`unknown routes 404 inside this theme's chrome`, async ({ page }) => {
       await withTheme(page, theme);
 
       const response = await page.goto("/projects/does-not-exist");
       expect(response?.status()).toBe(404);
+
+      /*
+       * design.md §32 — a 404 must arrive as a page of this theme, not a bare
+       * fallback. It keeps the theme, the navigation and the heading contract.
+       */
+      await expect(page.locator("html")).toHaveAttribute("data-theme", theme);
+      await expect(page.locator("h1")).toHaveCount(1);
+      await expect(page.locator("nav a").first()).toBeVisible();
     });
 
     test(`SEO metadata is identical regardless of theme (README §16)`, async ({ page }) => {

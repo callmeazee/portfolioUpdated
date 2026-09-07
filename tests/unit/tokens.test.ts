@@ -37,9 +37,19 @@ describe("design token conventions", () => {
   it("keeps hard-coded colours out of components (design.md §5)", () => {
     const offenders: string[] = [];
 
+    /*
+     * Two sanctioned exceptions, both cases where the token system is genuinely
+     * unavailable rather than merely inconvenient:
+     *
+     * - app/og/: rendered by Satori, which cannot read CSS custom properties.
+     * - global-error.tsx: replaces the root layout, so it has no `data-theme`
+     *   and no guarantee the stylesheet loaded. Depending on the theme system
+     *   in the boundary that catches the theme system failing would be unwise.
+     */
+    const EXCEPTIONS = ["app/og/", "global-error.tsx"];
+
     for (const file of files) {
-      /* The OG card is the sanctioned exception: Satori cannot read CSS vars. */
-      if (file.includes("app/og/")) continue;
+      if (EXCEPTIONS.some((exception) => file.includes(exception))) continue;
 
       const source = readFileSync(file, "utf8");
       for (const match of source.matchAll(/#[0-9a-fA-F]{3,8}\b/g)) {

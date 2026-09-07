@@ -1,18 +1,26 @@
-import Link from "next/link";
+import { getPageKit } from "@/themes/page-kit";
 
-export default function NotFound() {
+/**
+ * 404, rendered by the active theme's primitives so it arrives inside that
+ * theme's chrome rather than as a bare page (design.md §32).
+ */
+export default async function NotFound() {
+  const { Page, Empty, Action } = await getPageKit();
+
   return (
-    <main className="mx-auto w-full max-w-[var(--container-max)] px-md py-2xl" id="main">
-      <h1 className="text-display-m font-display">Page not found</h1>
-      <p className="mt-lg max-w-[65ch] text-body-m text-muted">
-        The page you are looking for does not exist or has moved.
-      </p>
-      <Link
-        href="/"
-        className="mt-lg inline-block rounded-md bg-accent px-md py-sm font-medium text-accent-foreground"
-      >
-        Go home
-      </Link>
-    </main>
+    <Page
+      title="Page not found"
+      intro="The page you are looking for does not exist or has moved."
+    >
+      <div className="mt-lg grid gap-lg">
+        <Empty>
+          If you followed a link here, it may be out of date. The navigation above lists
+          everything that does exist.
+        </Empty>
+        <div>
+          <Action href="/">Go home</Action>
+        </div>
+      </div>
+    </Page>
   );
 }

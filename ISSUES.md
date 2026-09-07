@@ -17,16 +17,17 @@
 
 ## Open — scheduled work, not defects
 
-| ID | Issue | Status | Priority | Notes |
-|---|---|---|---|---|
-| ISS-025 | App-shell themes reset scroll on switch | 🟡 | Low | macOS and Notion scroll an inner container, so window scroll is 0 after switching into them. Within README §3's "where practical"; the route is preserved and tested |
-| ISS-023 | Themes lack real mechanics | 🟡 | Medium | Phase 6 in progress (ADR-015). Steps 6.0–6.3 done. Editorial (6.4) and hardening (6.5) remain |
-| ISS-026 | JavaScript is not split per theme | 🟡 | Medium | **Measured.** Every theme ships an identical 8-chunk bundle: 622KB decoded, **188KB gzipped**. Cause: `renderer.ts` uses `import()` from a Server Component, and Next builds the client manifest statically per route, so all themes' client components share one graph. **Actual cost is smaller than first assumed:** theme-specific code is only ~22KB gz of the 188KB, so duplicate theme code wastes ~11KB gz. The larger waste was ISS-027 (now resolved: 188KB → 153KB gz). Remaining upside here is ~11KB gz, so this is low priority |
+None. Every engineering item is closed or explicitly accepted (see ADR-019 and the
+resolved table). Everything still open is blocked on real content.
 
 ## Resolved
 
 | ID | Issue | Resolved |
 |---|---|---|
+| ISS-023 | Themes lacked real mechanics | 2026-09-02 — Phase 6 complete. Four simulated environments with working mechanics, each covered by its own e2e suite |
+| ISS-025 | App-shell themes reset scroll on switch | 2026-09-02 — ⚪ Won't fix. macOS and Notion scroll an inner container, so window scroll is 0 by definition. Within README §3's "where practical"; the route is preserved and tested |
+| ISS-026 | JavaScript is not split per theme | 2026-09-02 — ⚪ Accepted debt (ADR-019). `next/dynamic` was implemented and measured: it split nothing and added ~2KB. Remaining upside is ~16KB gz of 153KB, against a routing-layer rewrite |
+| ISS-029 | No error boundary | 2026-09-02 — `error.tsx` and `global-error.tsx` added; 404 now renders through the active theme's PageKit. Deliberately no `loading.tsx`: pages render instantly from a static content layer, so a loading shell would be the "random loading screen" CLAUDE.md §39 prohibits |
 | ISS-001 | Complete repository discovery | 2026-09-02 — Phase 0 report delivered and approved |
 | ISS-007 | No test tooling | 2026-09-02 — Vitest (23 unit) + Playwright (31 e2e). `npm test`, `npm run test:e2e` |
 | ISS-028 | Structured data not implemented | 🔴 | Low | README §25 asks for structured data "where genuinely useful". A Person schema needs a real domain, email and profile URLs to be worth emitting — blocked on ISS-002/005/006 |

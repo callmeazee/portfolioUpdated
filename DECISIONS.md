@@ -349,6 +349,32 @@ where an environment's character lives and a shared abstraction would flatten it
 **Consequences:** All eight routes are themed, closing ISS-016. The neutral `PageShell` is
 deleted. Adding a route costs one file, not four.
 
+## ADR-019 — Per-Theme Code Splitting Is Accepted Debt
+**Status:** Accepted · 2026-09-02
+
+**Context:** ISS-026 established that all four themes ship one identical client bundle, so
+theme.md §14 ("only load what the active theme needs") is unmet.
+
+**What was tried and measured, not assumed.** Loading each theme's client root through
+`next/dynamic` — option (a) in ISS-026 — was implemented across all four shells and
+measured. It did **not** split anything: the bundle stayed byte-identical across themes and
+grew by ~2KB from the lazy-boundary wrappers, with one fewer chunk. Turbopack merges the
+route's client modules regardless of the lazy boundary, because the client-reference
+manifest is built per route and every theme is reachable from it. The change was reverted.
+
+**The remaining option is route groups per theme** with a proxy rewrite, giving four
+independent route trees and four manifests. That is a rewrite of the routing layer.
+
+**Decision:** accept the debt. The measured upside is **~16KB gzipped out of 153KB** — the
+theme-specific code totals 22KB gz, of which three-quarters is unused by any given visitor.
+Rewriting the routing layer, and giving up the single shared route tree that keeps SEO and
+content honest, is poor value for 10% of an already-modest payload.
+
+**Consequences:** theme.md §14 stays formally unmet, recorded rather than quietly dropped.
+Revisit if a theme grows substantially — the budget test in `tests/e2e/performance.spec.ts`
+will catch that, and it asserts the current shared-bundle behaviour so the day splitting
+starts working, it fails and says so.
+
 ## Future ADRs
 For each new decision record:
 - Date

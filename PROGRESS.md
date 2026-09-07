@@ -1,7 +1,7 @@
 # Portfolio Development Progress
 
 ## Current Status
-- **Phase:** 8, 10 and 13 complete → next: 12 SEO, then blocked on content (ISS-002)
+- **Phase:** 8, 10, 13 complete; 14 in progress → everything else blocked on content (ISS-002)
 - **Overall:** Four environments, integration-verified across every route, zero axe violations. Content records still unfilled.
 - **Last Updated:** 2026-09-02
 
@@ -22,14 +22,14 @@
 | 11 Performance | 🟡 |
 | 12 SEO | ⬜ |
 | 13 Testing | 🟢 |
-| 14 Production QA | ⬜ |
+| 14 Production QA | 🟡 |
 | 15 Deployment | ⬜ |
 
 Legend: ⬜ Not Started · 🟡 In Progress · 🟢 Complete · 🔴 Blocked · ⚪ Skipped
 
 ## Current Work
-- **Active task:** Phase 12 (SEO) is the last substantial engineering work; Phase 9 case
-  studies and Phase 15 deployment are both blocked on content (ISS-002).
+- **Active task:** All engineering issues are closed or accepted. Phases 9, 12 (structured
+  data), 15 and the design verification in 18 are blocked on content (ISS-002).
 - **Test suite:** `npm test` (37 unit) · `npm run test:e2e` (103 Playwright).
 - **Blockers:** ISS-002 (no real portfolio content). The editorial theme is structurally
   complete but renders mostly empty states, so it cannot be judged as a design until real
@@ -438,6 +438,32 @@ assertions, and neither set replaces the other.
 
 **Phase 13 — Testing.** 37 unit and 103 Playwright tests across theme mechanics,
 integration, accessibility, performance budgets and no-JS paths.
+
+### 2026-09-02 — Issue sweep
+
+Every engineering issue is now closed or explicitly accepted. What remains is blocked on
+content.
+
+**ISS-026 — attempted, measured, accepted (ADR-019).** `next/dynamic` was implemented across
+all four shells to split the per-theme bundles. It split nothing: the bundle stayed
+byte-identical and grew ~2KB from the lazy-boundary wrappers. Turbopack merges the route's
+client modules regardless, because the client manifest is built per route. Reverted.
+
+The only remaining approach is route groups per theme — a routing-layer rewrite — for a
+measured upside of **~16KB gzipped out of 153KB**. Accepted as debt rather than pretended
+away; the budget test asserts the current behaviour and will fail the day it changes.
+
+**ISS-029 — error boundaries were missing entirely.** `error.tsx` (with a `reset()` that
+genuinely retries) and `global-error.tsx` (inline-styled, since it replaces the root layout
+and cannot depend on the theme system) are added, and 404 now renders through the active
+theme's PageKit — verified themed in all four.
+
+**No `loading.tsx`, deliberately.** design.md §31 describes per-theme loading states, but
+these pages render instantly from a static content layer. A loading shell would flash on
+every navigation and would be precisely the "random loading screen" CLAUDE.md §39 lists as
+bad. Recorded so the omission reads as a decision rather than an oversight.
+
+**ISS-025 — won't fix**, with the reasoning already tested and documented.
 
 ## Rules
 After every meaningful session, update completed work, current phase, blockers, decisions

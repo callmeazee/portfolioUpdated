@@ -5,6 +5,11 @@ Record meaningful changes to the project.
 ## 2026-09-02
 
 ### Added
+- **Error boundaries.** `error.tsx` with a working retry and `global-error.tsx` for
+  root-layout failures; 404 now renders through the active theme's PageKit (ISS-029).
+- ADR-019 — per-theme code splitting accepted as debt after `next/dynamic` was measured and
+  found to split nothing.
+
 - **Phases 8, 10 and 13.** A 4 themes × 9 routes integration matrix, an axe-core WCAG 2.1
   A/AA audit across every theme (zero violations), and `@axe-core/playwright`.
 
