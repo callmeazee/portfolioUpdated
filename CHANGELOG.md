@@ -5,6 +5,9 @@ Record meaningful changes to the project.
 ## 2026-09-02
 
 ### Added
+- **Phases 8, 10 and 13.** A 4 themes × 9 routes integration matrix, an axe-core WCAG 2.1
+  A/AA audit across every theme (zero violations), and `@axe-core/playwright`.
+
 - **Phase 6 steps 6.4–6.5 — Editorial environment and hardening.** Scroll-driven reveals and
   reading progress (CSS-only), a case-study contents rail with scroll-spy, and a per-theme
   JavaScript budget test.
@@ -88,6 +91,9 @@ Record meaningful changes to the project.
 - `src/app/api/health/route.ts` — self-contained.
 
 ### Fixed
+- The brutalist marquee was a scrollable region with no keyboard access (axe
+  `scrollable-region-focusable`, WCAG 2.1.1). It is now decorative, `aria-hidden` and
+  clipped, adding no tab stop and no screen-reader duplication.
 - Window title-bar dragging suppressed clicks on the traffic-light controls, leaving them
   visibly live but inert. Drag gestures now ignore interactive elements.
 - Utility windows opened at full desktop size, completely covering the routed window.

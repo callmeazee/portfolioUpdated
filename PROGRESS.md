@@ -1,8 +1,8 @@
 # Portfolio Development Progress
 
 ## Current Status
-- **Phase:** 6 — Theme Environments. Steps 6.0–6.5 complete → next: content (ISS-002) or ISS-026
-- **Overall:** All four environments built and tested. One measured defect outstanding (ISS-026). Content records still unfilled.
+- **Phase:** 8, 10 and 13 complete → next: 12 SEO, then blocked on content (ISS-002)
+- **Overall:** Four environments, integration-verified across every route, zero axe violations. Content records still unfilled.
 - **Last Updated:** 2026-09-02
 
 ## Phase Tracker
@@ -16,20 +16,21 @@
 | 4 Editorial | 🟢 |
 | 5 Terminal | 🟢 |
 | 6 Theme Environments | 🟢 |
-| 8 Theme Integration | ⬜ |
+| 8 Theme Integration | 🟢 |
 | 9 Case Studies | ⬜ |
-| 10 Accessibility | 🟡 |
+| 10 Accessibility | 🟢 |
 | 11 Performance | 🟡 |
 | 12 SEO | ⬜ |
-| 13 Testing | 🟡 |
+| 13 Testing | 🟢 |
 | 14 Production QA | ⬜ |
 | 15 Deployment | ⬜ |
 
 Legend: ⬜ Not Started · 🟡 In Progress · 🟢 Complete · 🔴 Blocked · ⚪ Skipped
 
 ## Current Work
-- **Active task:** Blocked on content (ISS-002). Next engineering task is ISS-026.
-- **Test suite:** `npm test` (37 unit) · `npm run test:e2e` (69 Playwright).
+- **Active task:** Phase 12 (SEO) is the last substantial engineering work; Phase 9 case
+  studies and Phase 15 deployment are both blocked on content (ISS-002).
+- **Test suite:** `npm test` (37 unit) · `npm run test:e2e` (103 Playwright).
 - **Blockers:** ISS-002 (no real portfolio content). The editorial theme is structurally
   complete but renders mostly empty states, so it cannot be judged as a design until real
   copy lands. Content status: **40 fields pending, 6 sections awaiting, 6 publish blockers.**
@@ -410,6 +411,33 @@ reduced motion, never that they worked. Both now have positive tests — which m
 because both were rewritten from scratch.
 
 **Verification run:** typecheck, lint, build clean; 37 unit and 69 e2e tests pass.
+
+### 2026-09-02 — Phases 8, 10 and 13
+
+**Phase 8 — Theme Integration.** A 4 themes × 9 routes matrix asserting the structural
+contract everywhere: HTTP 200, the theme actually applied rather than falling back, exactly
+one `h1`, one `#main` landmark, reachable navigation, deep links resolving directly,
+unknown routes 404ing rather than rendering an empty shell, the résumé reachable from every
+theme, and — per README §16 — canonical URL, `og:image` and title identical regardless of
+theme. 22 tests, all passing.
+
+**Phase 10 — Accessibility.** axe-core against WCAG 2.1 A and AA, four themes × three
+routes. **Zero violations** after one real fix.
+
+The audit found `scrollable-region-focusable` (serious) in the brutalist marquee: it had
+`overflow-x: auto` but nothing focusable inside, so a keyboard user could never scroll it
+(WCAG 2.1.1) — a defect I introduced myself when making the strip scrollable for the
+reduced-motion case. The fix is to treat it as what it is: decorative repetition. It is now
+`aria-hidden` and clipped, so it adds no tab stop and no screen-reader duplication, and
+nothing is lost because every name in it is a real link elsewhere on the page.
+
+Worth noting what automation cannot do: axe catches roughly a third of real accessibility
+problems. It found the contrast and structure issues; the keyboard operation of window
+controls, focus restoration and reduced-motion behaviour are still covered by hand-written
+assertions, and neither set replaces the other.
+
+**Phase 13 — Testing.** 37 unit and 103 Playwright tests across theme mechanics,
+integration, accessibility, performance budgets and no-JS paths.
 
 ## Rules
 After every meaningful session, update completed work, current phase, blockers, decisions

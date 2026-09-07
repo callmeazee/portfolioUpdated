@@ -29,6 +29,7 @@
 |---|---|---|
 | ISS-001 | Complete repository discovery | 2026-09-02 — Phase 0 report delivered and approved |
 | ISS-007 | No test tooling | 2026-09-02 — Vitest (23 unit) + Playwright (31 e2e). `npm test`, `npm run test:e2e` |
+| ISS-028 | Structured data not implemented | 🔴 | Low | README §25 asks for structured data "where genuinely useful". A Person schema needs a real domain, email and profile URLs to be worth emitting — blocked on ISS-002/005/006 |
 | ISS-009 | Visual/responsive QA not performed | 2026-09-02 — run in Chromium. Focus visibility across all four themes, one `h1` per page, reduced motion, and no horizontal overflow at 360px on 6 routes × 4 themes. Screenshots reviewed; two real defects found and fixed (below) |
 | ISS-010 | Themed shadows need explicit variable syntax | 2026-09-02 — convention now enforced by a unit test that fails on any bare `shadow-*` utility, alongside tests for hard-coded colours and the theme/content boundary |
 | ISS-011 | Broken Open Graph image on every page | 2026-09-02 — replaced by the `/og` route handler (ADR-010) |

@@ -222,9 +222,11 @@
 
 /*
  * The global reduced-motion block clamps animation to 0.01ms, which would snap
- * the marquee to its end position and leave content off-screen. It is stopped
- * outright instead and the strip becomes a normal scrollable row — motion
- * removed, information preserved (design.md §17).
+ * the marquee to its end position and leave the strip visually empty. It is
+ * stopped at its start position instead, so the ticker simply sits still.
+ *
+ * Nothing is lost by clipping it: the strip is decorative and `aria-hidden`,
+ * and every name in it is a real link elsewhere on the page.
  */
 @media (prefers-reduced-motion: reduce) {
   .brutal-marquee-track {
