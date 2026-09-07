@@ -570,6 +570,43 @@ Verified the homepage still shows only the featured three in every theme. Notion
 lists all six, which is correct: that is the workspace page tree, persistent navigation on
 every page, not homepage content.
 
+### 2026-09-08 — Performance measured, not assumed
+
+Phase 11 was marked complete on bundle size alone. Actual load performance had never been
+measured, so it now has been — content.md §20's rule against invented performance numbers
+applies to this site as much as to the projects it describes.
+
+**Throttled to Slow 4G (1.6Mbps, 150ms RTT) with 4× CPU slowdown:**
+
+| Theme | FCP | LCP | CLS |
+|---|---|---|---|
+| Editorial | 752ms | 752ms | 0 |
+| Terminal | 772ms | 772ms | 0.0063 |
+| Brutalist | 704ms | 704ms | 0.0053 |
+| Notion | 708ms | 708ms | 0 |
+
+All comfortably inside the "good" thresholds (LCP ≤2500ms, CLS ≤0.1). **Caveat worth
+stating:** these run against localhost, so TTFB excludes real network and origin latency.
+The numbers are a floor, not a field prediction.
+
+A CLS regression test now guards all four themes. CLS is the metric that degrades silently
+whenever something renders after mount without reserved space — which this theme system does
+in several places: the macOS clock, the ⌘K shortcut label, persisted sidebar widths and
+project images.
+
+**Two live-site findings while retrying the weak screenshots:**
+- **MoviePlas's TMDB integration is failing in production**, not transiently — a second
+  attempt on a different day still returned "Failed to load home content" with zero images.
+  Anyone following that link from the portfolio sees a broken app.
+- FileMoon Cloud was cold-starting (Render free tier, HTTP 503 "SERVICE WAKING UP"), so
+  first-time visitors wait for a spin-up.
+
+Both existing captures were kept rather than replaced with worse ones.
+
+**README gained a Quick start.** The repository is public, and anyone opening it previously
+met a 1747-line product specification with no indication of what to run. The specification
+is untouched, below it.
+
 ## Rules
 After every meaningful session, update completed work, current phase, blockers, decisions
 and meaningful changes. Never mark work complete without verification.

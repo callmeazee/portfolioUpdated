@@ -5,6 +5,10 @@ Record meaningful changes to the project.
 ## 2026-09-02
 
 ### Added
+- **Core Web Vitals measured and guarded.** LCP ~700–770ms and CLS ≤0.0063 across all four
+  themes under Slow 4G with 4× CPU throttling; a CLS regression test now covers each theme.
+- **README Quick start** — install, scripts, architecture summary, ahead of the spec.
+
 - **Besties** restored as a distinct project after confirmation that it is not a rename of
   ConnectVerse.
 - **"View all projects"** on the homepage of every theme, with a cross-theme test.

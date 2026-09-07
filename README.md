@@ -17,6 +17,50 @@ Changing a theme must change the visual experience without duplicating portfolio
 
 ---
 
+## Quick start
+
+```bash
+npm install
+npm run dev            # http://localhost:3000
+```
+
+Copy `.env.example` to `.env.local` and set `NEXT_PUBLIC_SITE_URL` before deploying — it is
+the single source for canonical URLs, the sitemap, `robots.txt`, the Open Graph image and
+the JSON-LD.
+
+| Command | What it does |
+|---|---|
+| `npm run dev` | Development server |
+| `npm run build` / `npm start` | Production build and server |
+| `npm run typecheck` | `tsc --noEmit` |
+| `npm run lint` | ESLint |
+| `npm test` | Vitest — content invariants, theme resolution, window state machine |
+| `npm run test:e2e` | Playwright, against a production build |
+
+Switch theme with the on-page control, or by URL: `?theme=editorial` · `terminal` ·
+`brutalist` · `notion`.
+
+### How it is put together
+
+One content layer, one route tree, four presentations.
+
+```
+src/content/          canonical portfolio content — the single source of truth
+src/themes/           registry, cookie-based resolution, window runtime
+src/components/themes/{editorial,terminal,brutalist,notion}/
+src/app/              routes, shared by every theme
+```
+
+Themes receive content as props and may never import `src/content` directly — a unit test
+enforces it. That rule is what stops four presentations becoming four portfolios.
+
+The rest of this document is the product specification. Engineering decisions live in
+`DECISIONS.md`, current state in `PROGRESS.md`, and known gaps in `ISSUES.md`.
+
+---
+
+---
+
 ## 1. Project Vision
 
 This portfolio is not intended to be a simple collection of project cards.
