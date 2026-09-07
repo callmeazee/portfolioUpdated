@@ -88,7 +88,7 @@ test.describe("utility windows", () => {
     const finder = page.getByRole("region", { name: /Finder window/ });
     await expect(finder).toBeVisible();
     /* Real content from the content layer, not placeholder rows. */
-    await expect(finder.getByRole("link", { name: "besties" })).toBeVisible();
+    await expect(finder.getByRole("link", { name: "connectverse" })).toBeVisible();
 
     await page.getByRole("button", { name: /Close Finder/ }).click();
     await expect(finder).toBeHidden();

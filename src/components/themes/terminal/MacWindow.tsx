@@ -158,7 +158,15 @@ export function MacWindow({
         <span className="flex shrink-0 items-center gap-sm">{toolbar}</span>
       </header>
 
-      <div className="min-h-0 flex-1 overflow-auto">{children}</div>
+      {/*
+        `tabIndex={0}` so the window body can be scrolled from the keyboard.
+        axe flagged this (scrollable-region-focusable, WCAG 2.1.1) once real
+        content made /engineering overflow: that page has no links, so a
+        keyboard user had nothing to focus and no way to reach the bottom.
+      */}
+      <div tabIndex={0} className="min-h-0 flex-1 overflow-auto">
+        {children}
+      </div>
 
       {/* Pointer-only affordance; every function remains keyboard reachable. */}
       <span

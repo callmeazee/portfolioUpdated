@@ -257,7 +257,8 @@
       .editorial-in-view {
         animation: editorial-enter linear both;
         animation-timeline: view();
-        animation-range: entry 5% cover 25%;
+        /* Completes as the element enters, not a quarter of the way up. */
+        animation-range: entry 0% entry 60%;
       }
 
       .editorial-progress {
@@ -269,13 +270,22 @@
   }
 }
 
+/*
+ * Transform only — no opacity, for the same reason as the hero (ISS-021).
+ *
+ * The opacity version hid real content: at 1440x900 the "Selected work"
+ * section sat in the viewport at opacity 0.01, and on a taller monitor
+ * "Engineering" sat at 0. A visitor who did not scroll saw a blank page.
+ * README §24 — animations must never be required to understand content — and a
+ * scroll-driven fade cannot honour that when the element is already on screen.
+ *
+ * The rise remains, so the reveal still reads as one.
+ */
 @keyframes editorial-enter {
   from {
-    opacity: 0;
-    transform: translateY(1rem);
+    transform: translateY(0.75rem);
   }
   to {
-    opacity: 1;
     transform: translateY(0);
   }
 }

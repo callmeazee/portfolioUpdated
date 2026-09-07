@@ -22,16 +22,21 @@ describe("project accessors", () => {
   });
 
   it("resolves a project by slug and returns undefined otherwise", () => {
-    expect(getProjectBySlug("besties")?.title).toBe("Besties");
+    expect(getProjectBySlug("connectverse")?.title).toBe("ConnectVerse");
     expect(getProjectBySlug("does-not-exist")).toBeUndefined();
   });
 
-  it("features the three primary projects (README §11)", () => {
+  it("features exactly the three projects the résumé leads with (README §11)", () => {
     expect(getFeaturedProjects().map((p) => p.slug)).toEqual([
-      "besties",
-      "ecommerce",
-      "cloudcost-ai",
+      "cloudspire-ai",
+      "snitcher",
+      "connectverse",
     ]);
+  });
+
+  it("keeps the additional projects off the homepage (README §30 rule 14)", () => {
+    const unfeatured = getAllProjects().filter((project) => !project.featured);
+    expect(unfeatured.map((p) => p.slug)).toEqual(["filemoon-cloud", "movieplas"]);
   });
 });
 
@@ -78,20 +83,43 @@ describe("content completeness reporting (ADR-006)", () => {
     }
   });
 
-  it("counts every pending profile and contact field", () => {
-    expect(status.gaps).toContain("profile.positioning");
-    expect(status.gaps).toContain("profile.shortBio");
-    expect(status.gaps).toContain("contact.email");
-    /* Pending links are leaf gaps, not containers to descend into. */
-    expect(status.gaps).toContain("contact.github");
-    expect(status.gaps).not.toContain("contact.github.status");
+  it("treats a pending link as a leaf gap, not a container to descend into", () => {
+    /*
+     * A structural property of the walker rather than an assertion about which
+     * fields happen to be empty today — the latter goes stale the moment real
+     * content lands, which is exactly what happened to the previous version of
+     * this test.
+     */
+    for (const gap of status.gaps) {
+      expect(gap.endsWith(".status")).toBe(false);
+      expect(gap.endsWith(".url") && gap.startsWith("projects")).toBe(false);
+    }
   });
 
-  it("blocks publishing while any featured project is a placeholder", () => {
-    expect(status.isPublishable).toBe(false);
+  it("reports the profile fields that are genuinely still open", () => {
+    /* Not stated on the résumé; deliberately not invented. */
+    expect(status.gaps).toContain("profile.philosophy");
+    /* Supplied, so they must no longer be reported. */
+    expect(status.gaps).not.toContain("profile.positioning");
+    expect(status.gaps).not.toContain("contact.email");
+  });
+
+  it("every featured project satisfies the publish gate", () => {
+    /*
+     * The gate (ADR-006) requires a description, status, role, a verified stack
+     * and a case study on each featured project. Asserting the fields directly
+     * means this keeps working whether or not the gate is currently open.
+     */
     for (const project of getFeaturedProjects()) {
-      expect(status.publishBlockers.some((b) => b.startsWith(project.slug))).toBe(true);
+      expect(project.shortDescription, `${project.slug} description`).not.toBeNull();
+      expect(project.status, `${project.slug} status`).not.toBeNull();
+      expect(project.role, `${project.slug} role`).not.toBeNull();
+      expect(project.technologies.length, `${project.slug} stack`).toBeGreaterThan(0);
+      expect(project.caseStudy, `${project.slug} case study`).not.toBeNull();
     }
+
+    expect(status.publishBlockers).toEqual([]);
+    expect(status.isPublishable).toBe(true);
   });
 
   it("agrees with isPublishable", () => {

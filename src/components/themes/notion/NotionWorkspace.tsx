@@ -233,7 +233,8 @@ export function NotionWorkspace({
           </div>
         </header>
 
-        <div className="min-h-0 flex-1 overflow-y-auto">
+        {/* Keyboard-scrollable: see the note in MacWindow — same axe finding. */}
+        <div tabIndex={0} className="min-h-0 flex-1 overflow-y-auto">
           <div className={fullWidth ? "px-lg" : "mx-auto max-w-[46rem] px-lg"}>{children}</div>
         </div>
       </div>

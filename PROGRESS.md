@@ -1,8 +1,8 @@
 # Portfolio Development Progress
 
 ## Current Status
-- **Phase:** 12 and 14 complete. Every phase except 9 and 15 is done; both are blocked on content
-- **Overall:** Four environments, integration-verified across every route, zero axe violations. Content records still unfilled.
+- **Phase:** Real content landed. 0 publish blockers — the site is publishable once a domain is set
+- **Overall:** Four environments carrying real content. 0 publish blockers. Case-study depth and a domain remain.
 - **Last Updated:** 2026-09-02
 
 ## Phase Tracker
@@ -17,7 +17,7 @@
 | 5 Terminal | 🟢 |
 | 6 Theme Environments | 🟢 |
 | 8 Theme Integration | 🟢 |
-| 9 Case Studies | ⬜ |
+| 9 Case Studies | 🟡 |
 | 10 Accessibility | 🟢 |
 | 11 Performance | 🟡 |
 | 12 SEO | 🟢 |
@@ -28,9 +28,8 @@
 Legend: ⬜ Not Started · 🟡 In Progress · 🟢 Complete · 🔴 Blocked · ⚪ Skipped
 
 ## Current Work
-- **Active task:** None available. Phases 9 (case studies) and 15 (deployment) are the only
-  incomplete phases, and both are blocked on ISS-002.
-- **Test suite:** `npm test` (37 unit) · `npm run test:e2e` (110 Playwright).
+- **Active task:** Case-study depth (ISS-009) and the deployment domain (ISS-005).
+- **Test suite:** `npm test` (39 unit) · `npm run test:e2e` (110 Playwright).
 - **Blockers:** ISS-002 (no real portfolio content). The editorial theme is structurally
   complete but renders mostly empty states, so it cannot be judged as a design until real
   copy lands. Content status: **40 fields pending, 6 sections awaiting, 6 publish blockers.**
@@ -490,6 +489,40 @@ one-variable fix rather than a hope.
 **Deliberately not deployable.** `getContentStatus().isPublishable` is false while any
 featured project carries placeholder fields (ADR-006). It currently reports 6 blockers, and
 that gate is documented as the pre-deploy check.
+
+### 2026-09-02 — Real content landed
+
+A résumé was supplied. Profile, contact, experience, skills, education, five projects and
+five engineering areas are now populated from it. **Publish blockers: 6 → 0.**
+
+**The résumé contradicted the planning documents, and the résumé won.** The docs named the
+primary projects Besties, E-commerce Platform and CloudCost AI; the résumé names them
+ConnectVerse, Snitcher and CloudSpire AI, with live URLs. Treated as renames of the same
+three and flagged for confirmation (ISS-033).
+
+**One claim was dropped rather than carried over.** The docs described "Besties" as having
+WebRTC audio/video calling. The résumé's ConnectVerse mentions no WebRTC, audio or video at
+all — profiles, posts, likes, comments, notifications over Socket.IO. Publishing the WebRTC
+claim would have been fabrication, so it is absent (ISS-004).
+
+Two additional real projects — FileMoon Cloud and MoviePlas — were added as unfeatured, so
+they appear on `/projects` without crowding the homepage (README §30 rule 14).
+
+**Two real defects that only appeared once content existed:**
+
+- **Reveals hid visible content.** The scroll-driven reveals animated from `opacity: 0`. At
+  1440×900 the "Selected work" section sat *in the viewport* at opacity 0.01, and taller
+  monitors hid a different one — the page looked blank below the hero. This is the ISS-021
+  lesson again, applied to the hero but not to the sections. Now transform-only. The old
+  test scrolled to the bottom and passed throughout; the new one varies viewport height,
+  which is the variable that actually mattered.
+- **Scroll containers had no keyboard access.** Real content made `/engineering` overflow,
+  and that page has no links, so the macOS and Notion window bodies were scrollable with
+  nothing focusable inside (axe, WCAG 2.1.1). Both are now `tabIndex={0}`.
+
+**Three unit tests were asserting emptiness** and failed on contact with real data. They now
+assert the mechanism — that pending links are leaf gaps, that featured projects satisfy the
+publish gate — rather than a snapshot of what happened to be missing.
 
 ## Rules
 After every meaningful session, update completed work, current phase, blockers, decisions

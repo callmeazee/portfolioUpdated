@@ -38,19 +38,20 @@ test.describe("brutalist mechanics", () => {
 
     /*
      * Assertions use the DOM's casing: the display uppercase is a CSS
-     * transform, so the underlying text is still "Besties". The marquee test
+     * transform, so the underlying text is still "ConnectVerse". The marquee test
      * checks uppercase because that one uppercases in JavaScript.
      */
     const first = page.getByRole("link", { name: /Open project/ }).first();
-    await expect(first).toContainText("Besties");
+    /* Manual order leads with CloudSpire AI (order: 1). */
+    await expect(first).toContainText("CloudSpire");
 
+    /* Alphabetically CloudSpire still leads, so sort by name to a known change. */
     await page.getByLabel("Sort").selectOption("title");
-    /* Alphabetically Besties still leads; the filter below proves it is live. */
-    await expect(first).toContainText("Besties");
+    await expect(first).toContainText("CloudSpire");
 
-    await page.getByRole("button", { name: "AI" }).click();
+    await page.getByRole("button", { name: "Social Platform" }).click();
     await expect(page.getByRole("link", { name: /Open project/ })).toHaveCount(1);
-    await expect(page.getByRole("link", { name: /Open project/ })).toContainText("CloudCost");
+    await expect(page.getByRole("link", { name: /Open project/ })).toContainText("ConnectVerse");
   });
 
   test("the marquee carries real content, not filler", async ({ page }) => {
@@ -59,7 +60,7 @@ test.describe("brutalist mechanics", () => {
     const marquee = page.locator(".brutal-marquee-track");
     await expect(marquee).toBeVisible();
     /* Project names come from the content layer. */
-    await expect(marquee).toContainText("BESTIES");
+    await expect(marquee).toContainText("CLOUDSPIRE AI");
     await expect(marquee).toContainText("SOCIAL PLATFORM");
   });
 

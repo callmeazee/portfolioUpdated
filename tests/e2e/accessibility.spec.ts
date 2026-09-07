@@ -1,7 +1,7 @@
 import { expect, test, type Page } from "@playwright/test";
 
 const THEMES = ["editorial", "terminal", "brutalist", "notion"] as const;
-const ROUTES = ["/", "/projects", "/projects/besties", "/experience", "/notes", "/contact"];
+const ROUTES = ["/", "/projects", "/projects/connectverse", "/experience", "/notes", "/contact"];
 
 async function setTheme(page: Page, theme: string) {
   await page.context().addCookies([

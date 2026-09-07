@@ -251,6 +251,8 @@ export interface Note {
 export interface Contact {
   /** Only what is intentionally public (content.md §36). */
   email: string | null;
+  /** Optional per content.md §36 — published only if deliberately chosen. */
+  phone: string | null;
   github: ExternalLink;
   linkedin: ExternalLink;
   resume: {

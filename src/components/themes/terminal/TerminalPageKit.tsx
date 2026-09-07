@@ -92,7 +92,7 @@ function DefinitionList({ items }: KitDefinitionListProps) {
       {items.map((item) => (
         <div key={item.term} className="grid gap-xs sm:grid-cols-[12rem_1fr] sm:gap-md">
           <dt className="text-muted">{item.term.toLowerCase()}</dt>
-          <dd>{item.description}</dd>
+          <dd className="min-w-0 break-words">{item.description}</dd>
         </div>
       ))}
     </dl>

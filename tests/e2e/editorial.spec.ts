@@ -26,21 +26,39 @@ test.describe("editorial", () => {
     expect(Number(opacity)).toBe(1);
   });
 
-  test("scroll-driven reveals never leave content unreadable", async ({ page }) => {
-    await page.goto("/");
-    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
-    await page.waitForTimeout(300);
+  test("no on-screen section is ever transparent, at any viewport height", async ({ page }) => {
+    /*
+     * The previous version of this test scrolled to the bottom and checked one
+     * section, and passed while the bug was live: at 1440x900 the "Selected
+     * work" section sat IN the viewport at opacity 0.01, and taller monitors
+     * hid a different one. Viewport height is the variable that mattered.
+     */
+    for (const height of [720, 900, 1200, 1800]) {
+      await page.setViewportSize({ width: 1440, height });
+      await page.goto("/", { waitUntil: "networkidle" });
+      await page.waitForTimeout(250);
 
-    /* Every section must be readable once scrolled to, on any engine. */
-    await expect(page.getByRole("heading", { name: "Contact" })).toBeVisible();
-    const opacity = await page
-      .locator("section:has(h2#contact)")
-      .evaluate((el) => getComputedStyle(el).opacity);
-    expect(Number(opacity)).toBeGreaterThan(0.9);
+      const transparent = await page.$$eval("section", (elements) =>
+        elements
+          .filter((el) => el.getBoundingClientRect().top < window.innerHeight)
+          .map((el) => ({
+            id: el.getAttribute("aria-labelledby") ?? "?",
+            opacity: Number(getComputedStyle(el).opacity),
+          }))
+          .filter((entry) => entry.opacity < 0.9),
+      );
+
+      expect(
+        transparent,
+        `at 1440x${height}, sections on screen but transparent: ${transparent
+          .map((t) => `${t.id}=${t.opacity}`)
+          .join(", ")}`,
+      ).toEqual([]);
+    }
   });
 
   test("the case study contents list only advertises sections that exist", async ({ page }) => {
-    await page.goto("/projects/besties");
+    await page.goto("/projects/connectverse");
 
     const toc = page.getByRole("navigation", { name: "On this page" });
     const links = toc.getByRole("link");
@@ -61,7 +79,7 @@ test.describe("editorial", () => {
       { name: "portfolio-theme", value: "editorial", url: "http://localhost:3100" },
     ]);
     const page = await context.newPage();
-    await page.goto("/projects/besties");
+    await page.goto("/projects/connectverse");
 
     /* Plain anchors — only the "currently reading" highlight needs JavaScript. */
     await expect(page.getByRole("navigation", { name: "On this page" })).toBeAttached();

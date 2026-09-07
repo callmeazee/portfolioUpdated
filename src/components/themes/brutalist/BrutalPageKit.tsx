@@ -92,12 +92,14 @@ function DefinitionList({ items }: KitDefinitionListProps) {
       {items.map((item, index) => (
         <div
           key={item.term}
-          className={`grid grid-cols-[9rem_1fr] gap-md p-sm ${
+          /* Stacks below `sm`: a 9rem label column left too little room for a
+             URL at 360px, pushing the page 89px wide. */
+          className={`grid gap-xs p-sm sm:grid-cols-[9rem_1fr] sm:gap-md ${
             index > 0 ? "border-t-2 border-foreground" : ""
           }`}
         >
           <dt className="text-body-s font-bold uppercase">{item.term}</dt>
-          <dd className="text-body-m">{item.description}</dd>
+          <dd className="min-w-0 text-body-m break-words">{item.description}</dd>
         </div>
       ))}
     </dl>

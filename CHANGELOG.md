@@ -5,6 +5,9 @@ Record meaningful changes to the project.
 ## 2026-09-02
 
 ### Added
+- **Real portfolio content.** Profile, contact, experience, skills, education, engineering
+  areas and five projects, sourced from the supplied résumé. Publish blockers 6 → 0.
+
 - **Structured data (Phase 12).** `Person`, `WebSite` and per-project `CreativeWork` JSON-LD,
   identical across themes, with every field omitted unless a real value exists.
 - **Production QA (Phase 14).** Console-error and page-error sweep across four themes on a
@@ -101,6 +104,11 @@ Record meaningful changes to the project.
 - `src/app/api/health/route.ts` — self-contained.
 
 ### Fixed
+- Editorial scroll reveals animated from `opacity: 0`, leaving on-screen sections invisible
+  at common viewport heights (0.01 at 1440×900). Now transform-only.
+- macOS and Notion window bodies were scrollable with no keyboard access once real content
+  made `/engineering` overflow (WCAG 2.1.1).
+- Long URLs overflowed the brutalist definition grid at 360px.
 - The brutalist marquee was a scrollable region with no keyboard access (axe
   `scrollable-region-focusable`, WCAG 2.1.1). It is now decorative, `aria-hidden` and
   clipped, adding no tab stop and no screen-reader duplication.

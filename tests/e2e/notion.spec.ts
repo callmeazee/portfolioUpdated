@@ -27,20 +27,20 @@ test.describe("workspace chrome", () => {
   test("the page tree expands and collapses without navigating", async ({ page }) => {
     await page.goto("/");
 
-    /* Scoped to the tree: "Besties" is also a link in the database below, which
+    /* Scoped to the tree: "ConnectVerse" is also a link in the database below, which
        is correct — the same page reachable from two places. */
     const tree = page.getByRole("navigation", { name: "Workspace" });
     const toggle = page.getByRole("button", { name: /Collapse Projects/ });
 
-    await expect(tree.getByRole("link", { name: "Besties" })).toBeVisible();
+    await expect(tree.getByRole("link", { name: "ConnectVerse" })).toBeVisible();
 
     await toggle.click();
-    await expect(tree.getByRole("link", { name: "Besties" })).toBeHidden();
+    await expect(tree.getByRole("link", { name: "ConnectVerse" })).toBeHidden();
     /* Collapsing must not navigate — chevron and link are separate controls. */
     expect(new URL(page.url()).pathname).toBe("/");
 
     await page.getByRole("button", { name: /Expand Projects/ }).click();
-    await expect(tree.getByRole("link", { name: "Besties" })).toBeVisible();
+    await expect(tree.getByRole("link", { name: "ConnectVerse" })).toBeVisible();
   });
 
   test("the sidebar collapses and restores", async ({ page }) => {
@@ -106,21 +106,22 @@ test.describe("projects database", () => {
 
     await page.getByLabel("Filter").selectOption("Social Platform");
     await expect(rows).toHaveCount(1);
-    await expect(rows.first()).toContainText("Besties");
+    await expect(rows.first()).toContainText("ConnectVerse");
   });
 
   test("the sort genuinely reorders", async ({ page }) => {
     await page.goto("/");
 
     const firstCell = () => page.getByRole("table").locator("tbody tr").first();
-    await expect(firstCell()).toContainText("Besties");
+    /* Manual order leads with CloudSpire AI. */
+    await expect(firstCell()).toContainText("CloudSpire AI");
+
+    /* By name: C-l-o < C-o, so CloudSpire still leads — sort by type instead. */
+    await page.getByLabel("Sort").selectOption("category");
+    await expect(firstCell()).toContainText("CloudSpire AI");
 
     await page.getByLabel("Sort").selectOption("title");
-    /* Alphabetical: CloudCost AI sorts before Besties? No — B before C. */
-    await expect(firstCell()).toContainText("Besties");
-
-    await page.getByLabel("Sort").selectOption("category");
-    await expect(firstCell()).toContainText("CloudCost AI");
+    await expect(firstCell()).toContainText("CloudSpire AI");
   });
 
   test("a filter matching nothing says so rather than rendering an empty table", async ({ page }) => {
@@ -146,11 +147,11 @@ test.describe("workspace accessibility", () => {
       { name: "portfolio-theme", value: "notion", url: "http://localhost:3100" },
     ]);
     const page = await context.newPage();
-    await page.goto("/projects/besties");
+    await page.goto("/projects/connectverse");
 
     /* The workspace is a client shell, but content must still be readable. */
     await expect(page.locator("#main")).toBeVisible();
-    await expect(page.getByRole("heading", { level: 1 })).toContainText("Besties");
+    await expect(page.getByRole("heading", { level: 1 })).toContainText("ConnectVerse");
     await context.close();
   });
 });

@@ -13,7 +13,7 @@ import { expect, test } from "@playwright/test";
  */
 
 const THEMES = ["editorial", "terminal", "brutalist", "notion"] as const;
-const ROUTES = ["/", "/projects", "/projects/besties", "/engineering", "/notes"] as const;
+const ROUTES = ["/", "/projects", "/projects/connectverse", "/engineering", "/notes"] as const;
 
 /* Noise outside the app's control — nothing is suppressed that we could fix. */
 const IGNORED = [/favicon/i, /Download the React DevTools/i];
@@ -83,23 +83,34 @@ test.describe("structured data", () => {
       if (Array.isArray(value)) expect(value.length, `${key} was an empty array`).toBeGreaterThan(0);
     }
 
-    /* No email or profile links exist yet, so they must not appear at all. */
-    expect(person.email).toBeUndefined();
-    expect(person.sameAs).toBeUndefined();
+    /* Supplied values are asserted; every entry must be a real, usable value. */
+    expect(person.email).toMatch(/^mailto:.+@.+/);
+    expect(person.sameAs.length).toBeGreaterThan(0);
+    for (const profile of person.sameAs) expect(profile).toMatch(/^https:\/\//);
+
+    /*
+     * `philosophy` is not on the résumé and has no schema field, but the guard
+     * that matters is structural: nothing here may be a placeholder string.
+     */
+    expect(JSON.stringify(person)).not.toMatch(/pending|TODO|example\.com|yourhandle/i);
   });
 
-  test("a project with nothing to say emits no CreativeWork", async ({ page }) => {
-    await page.goto("/projects/cloudcost-ai");
-    const blocks = await page.locator('script[type="application/ld+json"]').allTextContents();
-    const types = blocks.map((block) => JSON.parse(block)["@type"]);
+  test("a project emits CreativeWork only once it has a description", async ({ page }) => {
+    /*
+     * Every project now carries a description, so all of them qualify. The rule
+     * still holds and is asserted directly: the emitted entry must describe the
+     * project rather than assert an empty shell.
+     */
+    for (const slug of ["connectverse", "snitcher", "cloudspire-ai", "movieplas"]) {
+      await page.goto(`/projects/${slug}`);
+      const entries = (
+        await page.locator('script[type="application/ld+json"]').allTextContents()
+      ).map((block) => JSON.parse(block));
 
-    /* Its description is pending — an entry here would assert nothing. */
-    expect(types).not.toContain("CreativeWork");
-
-    await page.goto("/projects/besties");
-    const bestiesTypes = (
-      await page.locator('script[type="application/ld+json"]').allTextContents()
-    ).map((block) => JSON.parse(block)["@type"]);
-    expect(bestiesTypes).toContain("CreativeWork");
+      const work = entries.find((entry) => entry["@type"] === "CreativeWork");
+      expect(work, `${slug} CreativeWork`).toBeDefined();
+      expect(work.description.length, `${slug} description`).toBeGreaterThan(10);
+      expect(work.name, `${slug} name`).toBeTruthy();
+    }
   });
 });

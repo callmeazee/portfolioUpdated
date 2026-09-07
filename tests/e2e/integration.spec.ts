@@ -16,7 +16,7 @@ const THEMES = ["editorial", "terminal", "brutalist", "notion"] as const;
 const ROUTES = [
   "/",
   "/projects",
-  "/projects/besties",
+  "/projects/connectverse",
   "/experience",
   "/engineering",
   "/about",
@@ -56,9 +56,9 @@ for (const theme of THEMES) {
     test(`deep links resolve directly, without going through the home page`, async ({ page }) => {
       await withTheme(page, theme);
 
-      await page.goto("/projects/besties");
-      await expect(page.getByRole("heading", { level: 1 })).toContainText("Besties");
-      expect(new URL(page.url()).pathname).toBe("/projects/besties");
+      await page.goto("/projects/connectverse");
+      await expect(page.getByRole("heading", { level: 1 })).toContainText("ConnectVerse");
+      expect(new URL(page.url()).pathname).toBe("/projects/connectverse");
     });
 
     test(`unknown routes 404 inside this theme's chrome`, async ({ page }) => {
@@ -78,15 +78,15 @@ for (const theme of THEMES) {
 
     test(`SEO metadata is identical regardless of theme (README §16)`, async ({ page }) => {
       await withTheme(page, theme);
-      await page.goto("/projects/besties");
+      await page.goto("/projects/connectverse");
 
       /* The canonical identity must not vary with presentation. */
       await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
         "href",
-        /\/projects\/besties$/,
+        /\/projects\/connectverse$/,
       );
       await expect(page.locator('meta[property="og:image"]')).toHaveAttribute("content", /\/og$/);
-      await expect(page).toHaveTitle(/Besties/);
+      await expect(page).toHaveTitle(/ConnectVerse/);
     });
 
     test(`the résumé is reachable from every theme (content.md §37)`, async ({ page }) => {

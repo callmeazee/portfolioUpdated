@@ -14,15 +14,32 @@ export default async function ContactPage() {
   const { Page, Section, DefinitionList, Empty, Action } = await getPageKit();
 
   /* content.md §36 — only what is intentionally public, never a guess. */
+  /* Protocol stripped for display only — the href keeps the real URL. */
+  const readable = (url: string) => url.replace(/^https?:\/\//, "");
+
   const channels = [
     contact.email
       ? { term: "Email", description: <a href={`mailto:${contact.email}`}>{contact.email}</a> }
       : null,
     contact.github.status === "available"
-      ? { term: "GitHub", description: <a href={contact.github.url}>{contact.github.url}</a> }
+      ? {
+          term: "GitHub",
+          description: (
+            <a href={contact.github.url} target="_blank" rel="noreferrer noopener">
+              {readable(contact.github.url)}
+            </a>
+          ),
+        }
       : null,
     contact.linkedin.status === "available"
-      ? { term: "LinkedIn", description: <a href={contact.linkedin.url}>{contact.linkedin.url}</a> }
+      ? {
+          term: "LinkedIn",
+          description: (
+            <a href={contact.linkedin.url} target="_blank" rel="noreferrer noopener">
+              {readable(contact.linkedin.url)}
+            </a>
+          ),
+        }
       : null,
   ].filter((entry) => entry !== null);
 

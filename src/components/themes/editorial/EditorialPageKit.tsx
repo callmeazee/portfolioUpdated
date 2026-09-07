@@ -98,7 +98,7 @@ function DefinitionList({ items }: KitDefinitionListProps) {
           <dt className="font-mono text-micro tracking-[0.14em] text-muted uppercase">
             {item.term}
           </dt>
-          <dd className="mt-xs text-body-m">{item.description}</dd>
+          <dd className="mt-xs min-w-0 text-body-m break-words">{item.description}</dd>
         </div>
       ))}
     </dl>

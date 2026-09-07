@@ -14,7 +14,7 @@ import { expect, test } from "@playwright/test";
  */
 
 const THEMES = ["editorial", "terminal", "brutalist", "notion"] as const;
-const ROUTES = ["/", "/projects/besties", "/engineering"] as const;
+const ROUTES = ["/", "/projects/connectverse", "/engineering"] as const;
 
 for (const theme of THEMES) {
   for (const route of ROUTES) {
