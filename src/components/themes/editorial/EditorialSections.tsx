@@ -199,9 +199,14 @@ export function EditorialContact({ contact }: { contact: Contact }) {
   return (
     <SectionFrame id="contact" label="Contact" last compact={!hasEmail}>
       {hasEmail ? (
+        /*
+          `break-all`: an email address has no spaces to wrap at, so at display
+          size it will push past a narrow viewport — one extra character was
+          enough to overflow 360px by 6px.
+        */
         <a
           href={`mailto:${contact.email}`}
-          className="text-heading-l font-display tracking-[-0.02em] hover:text-accent"
+          className="text-heading-l font-display tracking-[-0.02em] break-all hover:text-accent"
         >
           {contact.email}
         </a>
