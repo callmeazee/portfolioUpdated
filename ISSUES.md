@@ -19,8 +19,9 @@
 
 | ID | Issue | Status | Priority | Notes |
 |---|---|---|---|---|
-| ISS-016 | Non-home routes not themed | 🟡 | Medium | `/experience`, `/engineering`, `/about`, `/notes`, `/contact`, `/resume` render the neutral `PageShell` inside each theme's chrome. Phase 8 |
-| ISS-017 | Brutalist and Notion fall back to Editorial | 🟡 | High | Their renderer loaders point at the editorial module (ADR-013); they differ by token palette only. Phases 6–7 |
+| ISS-025 | App-shell themes reset scroll on switch | 🟡 | Low | macOS and Notion scroll an inner container, so window scroll is 0 after switching into them. Within README §3's "where practical"; the route is preserved and tested |
+| ISS-023 | Themes lack real mechanics | 🟡 | Medium | Phase 6 in progress (ADR-015). Steps 6.0–6.3 done. Editorial (6.4) and hardening (6.5) remain |
+| ISS-026 | Per-theme code splitting does not work | 🟡 | High | **Measured, not suspected:** all four themes ship a byte-identical set of 8 chunks (~622KB). ADR-013's claim is false and theme.md §14 is unmet. Cause: `renderer.ts` uses `import()` from a Server Component, and Next builds the client manifest statically per route, so every theme's client components land in one bundle. Candidate fixes: (a) load each theme's chrome through `next/dynamic` inside a client boundary — splits properly but pushes the editorial and brutalist shells into the client bundle, (b) route groups per theme with a proxy rewrite, giving four independent manifests — the option weighed and set aside during Phase 6 planning. Needs a decision before Phase 11 |
 
 ## Resolved
 
@@ -33,6 +34,8 @@
 | ISS-011 | Broken Open Graph image on every page | 2026-09-02 — replaced by the `/og` route handler (ADR-010) |
 | ISS-012 | All canonical URLs pointed at `example.com` | 2026-09-02 — env-driven `siteConfig.url`. Real domain still pending (ISS-005) |
 | ISS-013 | Fabricated boilerplate content in repo | 2026-09-02 — removed (ADR-009) |
+| ISS-017 | Brutalist and Notion fall back to Editorial | 2026-09-02 — every theme now loads its own module; the renderer falls back nowhere |
+| ISS-016 | Non-home routes not themed | 2026-09-02 — `PageKit` (ADR-018) themes all eight routes; the neutral `PageShell` is deleted. Verified: `/engineering` renders terminal window chrome under the terminal theme and none under editorial |
 | ISS-014 | No accessibility baseline | 2026-09-02 — added in Phase 1, now verified in a browser (ISS-009) |
 | ISS-015 | Theme switching costs one server round-trip | 2026-09-02 — verified acceptable: switching preserves route and scroll position under test. Accepted consequence of ADR-007 |
 | ISS-019 | Command palette interaction unverified | 2026-09-02 — 8 Playwright tests: ⌘K and the visible button, Escape restoring focus, arrow keys, Enter navigation, the §7.3 vocabulary, `theme <id>`, `command not found`, and the Tab containment |

@@ -3,6 +3,8 @@ import Link from "next/link";
 import type { CaseStudy, TechnicalSection } from "@/types/content";
 import type { ProjectViewProps } from "@/types/views";
 
+import { EditorialToc } from "./EditorialToc";
+
 /**
  * Case-study information hierarchy, in the order design.md §26 fixes:
  * title → description → metadata → overview → problem → solution → features →
@@ -164,6 +166,34 @@ function CaseStudyBody({ caseStudy }: { caseStudy: CaseStudy }) {
 }
 
 export function EditorialProjectDetail({ project }: ProjectViewProps) {
+  /*
+   * The contents list is built from the sections this page actually renders,
+   * so it can never advertise a heading that is not there — a thin record gets
+   * a short list rather than a list of dead links.
+   */
+  const sections: Array<{ id: string; label: string }> = [
+    { id: "stack", label: "Stack" },
+    ...(project.caseStudy
+      ? ([
+          project.caseStudy.overview.length > 0 && { id: "overview", label: "Overview" },
+          project.caseStudy.problem.length > 0 && { id: "problem", label: "Problem" },
+          project.caseStudy.solution.length > 0 && { id: "solution", label: "Solution" },
+          project.caseStudy.features.length > 0 && { id: "features", label: "Features" },
+          project.caseStudy.architecture && { id: "architecture", label: "Architecture" },
+          project.caseStudy.frontend && { id: "frontend", label: "Frontend" },
+          project.caseStudy.backend && { id: "backend", label: "Backend" },
+          project.caseStudy.database && { id: "database", label: "Database" },
+          project.caseStudy.realtime && { id: "realtime", label: "Real-time" },
+          project.caseStudy.infrastructure && { id: "infrastructure", label: "Infrastructure" },
+          project.caseStudy.security && { id: "security", label: "Security" },
+          project.caseStudy.challenges.length > 0 && { id: "challenges", label: "Challenges" },
+          { id: "performance", label: "Performance" },
+          project.caseStudy.learnings.length > 0 && { id: "learnings", label: "Learnings" },
+        ].filter(Boolean) as Array<{ id: string; label: string }>)
+      : []),
+    { id: "links", label: "Links" },
+  ];
+
   const metadata: Array<[string, string | null]> = [
     ["Role", project.role],
     ["Status", project.status],
@@ -178,6 +208,16 @@ export function EditorialProjectDetail({ project }: ProjectViewProps) {
 
   return (
     <main id="main" className="py-2xl">
+      {/*
+        Reading progress. Scroll-driven CSS, so it costs no JavaScript and no
+        per-frame work; `aria-hidden` because it duplicates information the
+        scrollbar already conveys.
+      */}
+      <div
+        aria-hidden="true"
+        className="fixed inset-x-0 top-0 z-30 h-[3px] bg-accent editorial-progress"
+      />
+
       <p className="font-mono text-caption tracking-[0.18em] text-muted uppercase">
         <Link href="/projects" className="hover:text-foreground">
           Projects
@@ -207,7 +247,9 @@ export function EditorialProjectDetail({ project }: ProjectViewProps) {
         ))}
       </dl>
 
-      <section className="mt-lg border-t border-border py-lg" aria-labelledby="stack">
+      <div className="mt-lg grid gap-lg lg:grid-cols-[1fr_12rem]">
+        <div className="min-w-0">
+      <section className="border-t border-border py-lg" aria-labelledby="stack">
         <h2 id="stack" className="font-mono text-caption tracking-[0.18em] text-muted uppercase">
           Stack
         </h2>
@@ -264,6 +306,12 @@ export function EditorialProjectDetail({ project }: ProjectViewProps) {
           ))}
         </ul>
       </section>
+        </div>
+
+        <aside className="lg:order-last">
+          <EditorialToc sections={sections} />
+        </aside>
+      </div>
     </main>
   );
 }

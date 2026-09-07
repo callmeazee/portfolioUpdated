@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 
+import { contact } from "@/content";
 import { createSeoMetadata } from "@/lib/seo";
+import { getPageKit } from "@/themes/page-kit";
 
 export const metadata: Metadata = createSeoMetadata({
   title: "Contact",
@@ -8,14 +10,35 @@ export const metadata: Metadata = createSeoMetadata({
   canonicalPath: "/contact",
 });
 
-export default function ContactPage() {
+export default async function ContactPage() {
+  const { Page, Section, DefinitionList, Empty, Action } = await getPageKit();
+
+  /* content.md §36 — only what is intentionally public, never a guess. */
+  const channels = [
+    contact.email
+      ? { term: "Email", description: <a href={`mailto:${contact.email}`}>{contact.email}</a> }
+      : null,
+    contact.github.status === "available"
+      ? { term: "GitHub", description: <a href={contact.github.url}>{contact.github.url}</a> }
+      : null,
+    contact.linkedin.status === "available"
+      ? { term: "LinkedIn", description: <a href={contact.linkedin.url}>{contact.linkedin.url}</a> }
+      : null,
+  ].filter((entry) => entry !== null);
+
   return (
-    <main className="mx-auto w-full max-w-[var(--container-max)] px-md py-2xl" id="main">
-      <h1 className="text-display-m font-display">Contact</h1>
-      <p className="mt-lg max-w-[65ch] text-body-m text-muted">
-        Contact details pending. Only addresses and profiles intentionally meant to be
-        public will be published here (content.md §36).
-      </p>
-    </main>
+    <Page title="Contact">
+      <Section id="channels" title="Reach me" compact={channels.length === 0}>
+        {channels.length === 0 ? (
+          <Empty>Contact details pending.</Empty>
+        ) : (
+          <DefinitionList items={channels} />
+        )}
+      </Section>
+
+      <Section id="resume" title="Résumé">
+        <Action href="/resume">Résumé</Action>
+      </Section>
+    </Page>
   );
 }

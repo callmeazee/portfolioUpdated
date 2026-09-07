@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 
-import { EmptyState, PageShell } from "@/components/shared/PageShell";
 import { engineeringAreas, skills } from "@/content";
 import { createSeoMetadata } from "@/lib/seo";
+import { getPageKit } from "@/themes/page-kit";
 
 export const metadata: Metadata = createSeoMetadata({
   title: "Engineering",
@@ -11,45 +11,36 @@ export const metadata: Metadata = createSeoMetadata({
   canonicalPath: "/engineering",
 });
 
-export default function EngineeringPage() {
-  return (
-    <PageShell title="Engineering">
-      <section className="mt-lg" aria-labelledby="skills">
-        <h2 id="skills" className="text-heading-s font-display">
-          Skills
-        </h2>
-        {/* Grouped, never rated — no percentage bars (README §30 rule 15). */}
-        {skills.length === 0 ? (
-          <EmptyState>Skills pending.</EmptyState>
-        ) : (
-          <div className="mt-sm grid gap-md sm:grid-cols-2">
-            {skills.map((group) => (
-              <div key={group.group}>
-                <h3 className="font-mono text-micro text-muted uppercase">{group.group}</h3>
-                <p className="mt-xs text-body-s">{group.items.join(" · ")}</p>
-              </div>
-            ))}
-          </div>
-        )}
-      </section>
+export default async function EngineeringPage() {
+  const { Page, Section, Card, DefinitionList, Empty } = await getPageKit();
 
-      <section className="mt-xl" aria-labelledby="areas">
-        <h2 id="areas" className="text-heading-s font-display">
-          Areas
-        </h2>
-        {engineeringAreas.length === 0 ? (
-          <EmptyState>Engineering areas pending.</EmptyState>
+  return (
+    <Page title="Engineering">
+      {/* Grouped, never rated — no percentage bars (README §30 rule 15). */}
+      <Section id="skills" title="Skills" compact={skills.length === 0}>
+        {skills.length === 0 ? (
+          <Empty>Skills pending.</Empty>
         ) : (
-          <ul className="mt-sm grid gap-md">
+          <DefinitionList
+            items={skills.map((group) => ({
+              term: group.group,
+              description: group.items.join(" · "),
+            }))}
+          />
+        )}
+      </Section>
+
+      <Section id="areas" title="Areas" compact={engineeringAreas.length === 0}>
+        {engineeringAreas.length === 0 ? (
+          <Empty>Engineering areas pending.</Empty>
+        ) : (
+          <ul>
             {engineeringAreas.map((area) => (
-              <li key={area.id}>
-                <h3 className="text-heading-s font-display">{area.name}</h3>
-                <p className="text-body-s text-muted">{area.shortDescription}</p>
-              </li>
+              <Card key={area.id} title={area.name} description={area.shortDescription} />
             ))}
           </ul>
         )}
-      </section>
-    </PageShell>
+      </Section>
+    </Page>
   );
 }

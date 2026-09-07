@@ -21,5 +21,7 @@ for (const theme of THEMES) {
     await shoot(page, theme, "/", "home-desktop", 1440);
     await shoot(page, theme, "/", "home-mobile", 390);
     await shoot(page, theme, "/projects/besties", "case-desktop", 1440);
+    /* A generic route, to confirm PageKit themes it rather than a neutral shell (ISS-016). */
+    await shoot(page, theme, "/engineering", "generic-desktop", 1440);
   });
 }

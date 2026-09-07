@@ -1,8 +1,8 @@
 # Portfolio Development Progress
 
 ## Current Status
-- **Phase:** 5 — Terminal (complete). Phase 13 testing brought forward → next: 6 Neo-Brutalist
-- **Overall:** Editorial and Terminal complete, now covered by 54 automated tests and browser QA. Records still unfilled — content is the critical path.
+- **Phase:** 6 — Theme Environments. Steps 6.0–6.5 complete → next: content (ISS-002) or ISS-026
+- **Overall:** All four environments built and tested. One measured defect outstanding (ISS-026). Content records still unfilled.
 - **Last Updated:** 2026-09-02
 
 ## Phase Tracker
@@ -15,12 +15,11 @@
 | 3 Routing & Shell | 🟢 |
 | 4 Editorial | 🟢 |
 | 5 Terminal | 🟢 |
-| 6 Neo-Brutalist | ⬜ |
-| 7 Notion | ⬜ |
+| 6 Theme Environments | 🟢 |
 | 8 Theme Integration | ⬜ |
 | 9 Case Studies | ⬜ |
 | 10 Accessibility | 🟡 |
-| 11 Performance | ⬜ |
+| 11 Performance | 🟡 |
 | 12 SEO | ⬜ |
 | 13 Testing | 🟡 |
 | 14 Production QA | ⬜ |
@@ -29,8 +28,8 @@
 Legend: ⬜ Not Started · 🟡 In Progress · 🟢 Complete · 🔴 Blocked · ⚪ Skipped
 
 ## Current Work
-- **Active task:** Phase 6 — Neo-Brutalist theme.
-- **Test suite:** `npm test` (23 unit) · `npm run test:e2e` (31 Playwright).
+- **Active task:** Blocked on content (ISS-002). Next engineering task is ISS-026.
+- **Test suite:** `npm test` (37 unit) · `npm run test:e2e` (67 Playwright).
 - **Blockers:** ISS-002 (no real portfolio content). The editorial theme is structurally
   complete but renders mostly empty states, so it cannot be judged as a design until real
   copy lands. Content status: **40 fields pending, 6 sections awaiting, 6 publish blockers.**
@@ -221,6 +220,172 @@ the e2e suite run twice to confirm stability.
 **Still not verifiable:** whether the designs are *good*. Structure, accessibility and
 responsive behaviour are now proven in a browser, but every theme renders mostly empty
 states (ISS-018).
+
+### 2026-09-02 — Step 6.0 Theme runtime and contract
+
+Direction change: the four themes were presentation layers, not environments — the whole
+app had two client components, so nothing ran (ADR-015). Phase 6 rebuilds them with real
+mechanics. This step laid the foundation.
+
+**Done and verified:**
+- `src/themes/runtime/` — pure window state machine (`window-state.ts`), window manager
+  context, `useDragGesture` on Pointer Events, `useReducedMotion`, `usePersistentUi`.
+- Expanded contract (`src/types/views.ts`): `Layout` → `Shell` with the collections a shell
+  navigates, plus `PageKit` (ADR-018).
+- Editorial and Terminal migrated; both publish a PageKit.
+- All six previously-unthemed routes converted; neutral `PageShell` deleted (closes ISS-016).
+- `motion` and `lucide-react` added, per-theme only (ADR-017).
+
+**Verification run:** `typecheck`, `lint`, `build` clean. 35 unit tests (12 new, covering
+z-ordering, focus-after-close, zoom restore, size clamping and the routed window's
+un-closability) and 31 e2e tests pass. Screenshot confirms `/engineering` renders terminal
+window chrome under the terminal theme and none under editorial.
+
+**Two lint findings fixed rather than suppressed:** `usePersistentUi` rebuilt on
+`useSyncExternalStore` — storage genuinely is external state, which also removes an extra
+render; and the drag hook's ref update moved out of render into an effect, unsafe under
+concurrent rendering.
+
+**Not yet done:** no environment mechanics exist yet — that is steps 6.1–6.4. The runtime is
+built but only the window state machine is exercised.
+
+### 2026-09-02 — Step 6.1 macOS environment
+
+**Done and verified:**
+- Menu bar with working Go / Window / Theme menus (native `<details>`) and a real clock.
+  No battery or wifi indicator — those would be invented status (CLAUDE.md §39).
+- Dock with genuine cursor magnification, driven by motion values rather than React state
+  so a pointermove costs zero renders. Running indicators reflect real window state.
+- `MacWindow` with functional traffic lights: close, minimize, zoom. Draggable title bar
+  and corner resize on Pointer Events.
+- Finder and Terminal utility windows, client-rendered from the static content layer
+  (ADR-016). The Terminal executes real commands and shares its vocabulary with ⌘K.
+- Mobile (theme.md §12): full-screen windows, no drag, dock scrolls within itself so no
+  destination is hidden.
+
+**Verification run:** `typecheck`, `lint`, `build` clean; 37 unit and 42 e2e tests pass.
+Eleven new e2e tests cover the desktop specifically — minimize/restore, zoom reporting its
+state, the routed window's absent close control, dock navigation, Finder browsing real
+content, the Terminal executing and rejecting commands, window stacking and raise-on-click,
+keyboard operation of window controls, and magnification being skipped under reduced motion.
+
+**Two real bugs found by those tests:**
+- The title bar's drag handler called `preventDefault` on pointerdown, which suppressed the
+  click on every traffic light. The controls looked live and did nothing — precisely the
+  fake interaction §39 prohibits. `useDragGesture` now ignores gestures starting on an
+  interactive element.
+- Utility windows opened at full desktop size, burying the routed window. They now cascade
+  at a modest size, measured in the click handler so hydration stays in step.
+
+**One regression caught and fixed:** moving the theme switcher into the menu bar briefly
+made theme switching require JavaScript. The Theme menu now uses relative `?theme=`
+anchors, so a no-JS visitor who opens a shared `?theme=terminal` link can still leave.
+
+**Not yet done:** Notion, Brutalist and Editorial remain as they were — Brutalist and Notion
+still fall back to the editorial module (ISS-017).
+
+### 2026-09-02 — Step 6.2 Notion workspace
+
+**Done and verified:**
+- Resizable, collapsible sidebar with a page tree whose chevron and page link are separate
+  controls — expanding must not navigate, navigating must not collapse.
+- Breadcrumb bar plus the two page controls Notion actually has: the font switcher
+  (Default / Serif / Mono) and the full-width toggle. Both persist per viewer.
+- Block vocabulary: callout, toggle (native `<details>`), quote, divider, properties table,
+  tags, and a code block whose copy button genuinely copies.
+- Projects database with Table / Board / Gallery views and working filter and sort over the
+  canonical content layer.
+- Case study rendered as a Notion page, deep technical detail behind toggles — the
+  progressive disclosure design.md §2.3 asks for.
+- Mobile: the sidebar becomes a drawer (theme.md §12).
+
+**Deliberately omitted:** block drag handles and the slash menu. Both imply editing this
+page cannot do, and a handle that reorders nothing is the fake interaction CLAUDE.md §39
+prohibits.
+
+**Verification run:** `typecheck`, `lint`, `build` clean; 37 unit and 54 e2e tests pass.
+Twelve new Notion tests assert the mechanics are real rather than decorative: the tree
+expanding without navigating, the sidebar collapsing and persisting, the font switcher
+changing the computed font, all three database views, and the filter and sort actually
+changing which records render.
+
+**One trap caught in my own work:** the theme switcher was first written as a `<select>`
+with a `window.location` handler, which would have made switching away from the workspace
+require JavaScript — the same trap hit in Phase 5 and again in 6.1. It is now a `<details>`
+menu of relative `?theme=` anchors.
+
+**One limitation documented rather than hidden:** switching into an app-shell theme resets
+scroll position. macOS and Notion are fixed-viewport shells that scroll an inner container,
+so window scroll is 0 by definition. README §3 asks for preservation "where practical"; the
+tests now assert scroll survives between document-scrolling themes, and that the *route*
+survives when switching into a shell theme.
+
+### 2026-09-02 — Step 6.3 Neo-Brutalist environment
+
+**Done and verified:**
+- Physical press primitives — hover displacement, hard-shadow collapse, 3px translate on
+  `:active`. All CSS state, so they cost zero JavaScript and work before hydration.
+- Marquee ticker carrying real project names, categories and any verified stack entries.
+  Server-rendered; the loop is a CSS keyframe.
+- Project filtering by category plus sorting, via chunky toggles over the content layer.
+- Bracketed navigation and a large bold theme selector (design.md §§24, 33), built from
+  `?theme=` anchors so switching works without JavaScript.
+- Cursor-following block — honest decoration: `aria-hidden`, pointer-events none, skipped
+  under reduced motion and on coarse pointers.
+- Case study as a poster sequence, same hierarchy as every other theme.
+
+**Intentional, not random (theme.md §8.5):** the grid asymmetry — the lead project spanning
+both columns — is derived from the explicit `order` field, never randomised. A test reloads
+the page and asserts the layout is identical.
+
+**Verification run:** `typecheck`, `lint`, `build` clean; 37 unit and 61 e2e tests pass.
+Seven new brutalist tests cover filtering, sorting, the marquee carrying real content, the
+fixed asymmetry, the cursor follower being absent under reduced motion, the marquee stopping
+rather than snapping there, and no-JS theme switching.
+
+**One reduced-motion subtlety:** the global block clamps animation to 0.01ms, which would
+snap the marquee to its end position and leave content off-screen. It is explicitly stopped
+instead and the strip becomes a normal scrollable row — motion removed, information kept.
+
+**Milestone:** all four themes now load their own module. The renderer no longer falls back
+anywhere, which closes ISS-017.
+
+### 2026-09-02 — Steps 6.4 Editorial and 6.5 Hardening
+
+**Editorial (6.4):**
+- Scroll-driven reveals via `animation-timeline: view()` — compositor-driven, zero
+  JavaScript, which is what keeps Editorial the lightest theme (README §15).
+- Reading progress bar via `animation-timeline: scroll()`, also CSS-only and `aria-hidden`
+  since it duplicates the scrollbar.
+- Case-study contents rail with IntersectionObserver scroll-spy. This one earns its
+  JavaScript: knowing where you are in a long case study is navigation, not decoration. The
+  links are plain anchors that work unhydrated; only the highlight needs the observer.
+- Every reveal is gated twice — on `@supports` and on `prefers-reduced-motion` — so content
+  is never dependent on an animation running. The hero is excluded outright; ISS-021 was
+  precisely that mistake.
+
+**View transitions were dropped, not forgotten:** React's `ViewTransition` is absent from
+the installed React and has no types, so shipping it would have meant untyped, unverifiable
+code. Recorded here rather than left as a silent gap.
+
+**Hardening (6.5) — the budget test disproved ADR-013.**
+
+The test was written to verify that inactive themes' JavaScript never ships. It found the
+opposite: all four themes download a byte-identical set of 8 chunks, roughly 622KB. The
+first version of the test *passed* because it double-counted responses; de-duplicating by
+URL exposed the truth.
+
+Cause: `renderer.ts` calls `import()` from a Server Component. Next builds the
+client-reference manifest statically per route, so because any theme could be selected,
+every theme's client components land in one bundle. `import()` in a server component splits
+the server graph, not the client one.
+
+ADR-013 now carries a correction, and ISS-026 records the defect with two candidate fixes.
+The test suite documents the current behaviour rather than the aspiration: when splitting
+starts working, `themes currently share one bundle` will fail, and that failure is the
+signal to replace it with a per-theme assertion.
+
+**Verification run:** `typecheck`, `lint`, `build` clean; 37 unit and 67 e2e tests pass.
 
 ## Rules
 After every meaningful session, update completed work, current phase, blockers, decisions

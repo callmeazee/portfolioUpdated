@@ -1,10 +1,12 @@
 import { TerminalHome } from "./TerminalHome";
-import { TerminalLayout } from "./TerminalLayout";
+import { terminalPageKit } from "./TerminalPageKit";
 import { TerminalProjectDetail } from "./TerminalProjectDetail";
+import { TerminalShell } from "./TerminalShell";
 import type { ThemeSections } from "@/types/views";
 
 export const sections: ThemeSections = {
-  Layout: TerminalLayout,
+  Shell: TerminalShell,
+  PageKit: terminalPageKit,
   Home: TerminalHome,
   ProjectDetail: TerminalProjectDetail,
 };

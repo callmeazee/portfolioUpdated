@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 
-import { EmptyState, PageShell } from "@/components/shared/PageShell";
-import { contact } from "@/content";
+import { contact, profile } from "@/content";
 import { createSeoMetadata } from "@/lib/seo";
+import { getPageKit } from "@/themes/page-kit";
 
 export const metadata: Metadata = createSeoMetadata({
   title: "Résumé",
@@ -11,19 +11,20 @@ export const metadata: Metadata = createSeoMetadata({
 });
 
 /** content.md §37 — the résumé must be reachable from every theme. */
-export default function ResumePage() {
+export default async function ResumePage() {
+  const { Page, Empty, Action } = await getPageKit();
+
   return (
-    <PageShell title="Résumé">
-      {contact.resume.url === null ? (
-        <EmptyState>Résumé not available yet.</EmptyState>
-      ) : (
-        <a
-          href={contact.resume.url}
-          className="mt-lg inline-block rounded-md bg-accent px-md py-sm font-medium text-accent-foreground"
-        >
-          Download {contact.resume.label}
-        </a>
-      )}
-    </PageShell>
+    <Page title="Résumé" intro={`${profile.fullName} — ${profile.title}`}>
+      <div className="mt-lg">
+        {contact.resume.url === null ? (
+          <Empty>Résumé not available yet.</Empty>
+        ) : (
+          <Action href={contact.resume.url} external>
+            Download {contact.resume.label}
+          </Action>
+        )}
+      </div>
+    </Page>
   );
 }

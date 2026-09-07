@@ -208,8 +208,19 @@ Theme components receive content as PROPS and may not import `@/content`. That s
 is what stops a theme from redefining what a project is.
 
 **Consequences:** Adding a theme means adding a module and a loader entry — the route tree,
-SEO and content layer are untouched. Combined with ADR-007's server-side resolution, a
-visitor downloads exactly one theme.
+SEO and content layer are untouched.
+
+**CORRECTION (2026-09-02, step 6.5):** this ADR originally claimed "a visitor downloads
+exactly one theme". That is **false**, and was never verified until the budget test was
+written. Measurement shows all four themes ship a byte-identical set of eight chunks.
+
+Cause: the loaders `import()` from a Server Component. Next builds the client-reference
+manifest statically per route, so because any of the four could be selected, every theme's
+client components land in the same route bundle. `import()` in a server component splits the
+SERVER graph, not the client one — the distinction this ADR missed.
+
+The dynamic imports still keep the server graph tidy, and the contract stands. The bundle
+claim does not. Tracked as ISS-026 with candidate fixes; theme.md §14 remains unmet.
 
 Until Phases 5–7 land, Terminal, Brutalist and Notion point their loaders at the editorial
 module. This is theme.md §15's documented fallback rather than a stub, and it is not
@@ -244,6 +255,80 @@ restores focus, so the modal is not a keyboard trap.
 presentation, which on its own strands anyone who opens a shared `?theme=terminal` link and
 dislikes it. The terminal footer therefore carries relative `?theme=` anchors — real links
 that preserve the current path, work without JavaScript, and are keyboard reachable.
+
+## ADR-015 — Themes Are Simulated Environments, Not Skins
+**Status:** Accepted · 2026-09-02
+
+**Context:** Phases 4–5 delivered four themes as presentation layers — the same markup with
+different CSS variables. The whole application held two client components, so nothing ran
+and nothing felt alive. The intent was always four *environments*: a macOS desktop, a Notion
+workspace, a physical brutalist interface, a magazine.
+
+**Decision:** Rebuild each theme with the working mechanics of the thing it evokes — windows
+that open, close, minimize and zoom; a sidebar tree and database views; buttons that
+depress; scroll choreography.
+
+**Documented conflict, resolved by explicit instruction.** `CLAUDE.md:804-806` ("Do not
+simply clone Notion… inspired by the information architecture, not become a literal copy"),
+`theme.md:708` ("Do not reproduce Notion pixel-for-pixel") and `theme.md:196` ("Do not
+directly clone another product") forbid what was requested. Explicit user instruction ranks
+above these in CLAUDE.md's own hierarchy, and the user confirmed the override after the
+conflict was put to them. **Resolution: replicate Notion's behaviour faithfully using
+original assets** — Lucide icons and open fonts. Notion's proprietary icon set and font
+licensing rule out literal assets regardless.
+
+For macOS there is no conflict: `design.md` §19 states the traffic lights "are decorative
+**unless they perform a real function**", and `CLAUDE.md` §39 lists an interactive terminal
+among its good examples. Functional window controls are what the specification asked for.
+
+**Consequences:** Client JavaScript grows substantially, contained by the per-theme dynamic
+imports of ADR-013. `CLAUDE.md` §39 still binds absolutely: every control does real work.
+Fake battery indicators, boot sequences and drag handles that reorder nothing stay out.
+
+## ADR-016 — macOS Window Model: Route-Bound Main Window
+**Status:** Accepted · 2026-09-02
+
+**Context:** A desktop of draggable windows sits awkwardly with a server-rendered route
+tree. Rendering every window client-side would be the most authentic simulation but would
+stop page content being server-rendered, weakening the SEO that `README` §16 protects.
+
+**Decision:** The current route server-renders inside the focused window, keeping SEO, deep
+links and `<main id="main">` intact. Additional windows — a Finder-style project browser, a
+Terminal, Get Info — are client-rendered from the static content layer, which costs nothing
+in SEO because that content already exists on real routes.
+
+**Consequences:** A genuine multi-window desktop without giving up server rendering. The
+routed window cannot be closed (closing it would blank the page); the state machine enforces
+this via its `isRoute` flag, covered by a unit test.
+
+## ADR-017 — `motion` and `lucide-react`
+**Status:** Accepted · 2026-09-02
+
+**Context:** `CLAUDE.md` §35 requires justifying each dependency. Dock magnification, genie
+minimize and spring physics are painful to hand-roll well.
+
+**Decision:** Add `motion` and `lucide-react`, imported only inside the theme modules that
+use them so the renderer's code-splitting keeps Editorial light. `lucide-react` is already
+sanctioned by `design.md` §12.
+
+**Rejected:** a drag library. Pointer Events with `setPointerCapture` cover drag and resize
+in roughly a hundred lines (`src/themes/runtime/use-drag.ts`), and a dependency would be
+dead weight.
+
+## ADR-018 — PageKit: Themed Primitives for Generic Routes
+**Status:** Accepted · 2026-09-02
+
+**Context:** The theme contract covered `Home` and `ProjectDetail` only, so the other six
+routes rendered a neutral `PageShell` that merely inherited the theme's chrome (ISS-016).
+Writing bespoke components for eight routes across four themes means thirty-two components.
+
+**Decision:** Each theme publishes a `PageKit` — `Page`, `Section`, `Prose`, `Card`,
+`DefinitionList`, `Empty`, `Action`. Generic routes compose from whichever theme is active,
+resolved by `src/themes/page-kit.ts`. `Home` and `ProjectDetail` stay bespoke, since that is
+where an environment's character lives and a shared abstraction would flatten it.
+
+**Consequences:** All eight routes are themed, closing ISS-016. The neutral `PageShell` is
+deleted. Adding a route costs one file, not four.
 
 ## Future ADRs
 For each new decision record:

@@ -5,6 +5,31 @@ Record meaningful changes to the project.
 ## 2026-09-02
 
 ### Added
+- **Phase 6 steps 6.4–6.5 — Editorial environment and hardening.** Scroll-driven reveals and
+  reading progress (CSS-only), a case-study contents rail with scroll-spy, and a per-theme
+  JavaScript budget test.
+
+- **Phase 6 step 6.3 — the Neo-Brutalist environment.** CSS-only physical press and hover
+  displacement, a marquee of real project data, project filtering and sorting, bracketed
+  navigation, a bold no-JS theme selector, and a cursor follower gated on motion preference.
+  All four themes now load their own module.
+
+- **Phase 6 step 6.2 — the Notion workspace.** Resizable/collapsible sidebar with a page
+  tree, breadcrumbs, font switcher and full-width toggle, block vocabulary (callout, toggle,
+  quote, divider, properties, code with copy), and a projects database with Table/Board/
+  Gallery views plus working filter and sort. Mobile drawer navigation.
+
+- **Phase 6 step 6.1 — the macOS environment.** Menu bar with working menus and a live
+  clock; dock with cursor magnification and running indicators; windows with functional
+  close/minimize/zoom, drag and resize; Finder and Terminal utility windows; a deliberate
+  mobile layout.
+
+- **Phase 6 step 6.0 — theme runtime and contract.** `src/themes/runtime/` (window state
+  machine, window manager, drag gesture, reduced-motion and persistence hooks); `Shell` +
+  `PageKit` theme contract; `motion` and `lucide-react` as per-theme dependencies.
+- ADR-015 (environments not skins, with the Notion override), ADR-016 (window model),
+  ADR-017 (dependencies), ADR-018 (PageKit).
+
 - **Test tooling.** Vitest (23 unit tests) and Playwright (31 e2e tests over a production
   build), plus a screenshot harness. `npm test`, `npm run test:e2e`.
 - Convention tests that enforce what was previously only documented: no bare Tailwind
@@ -63,6 +88,9 @@ Record meaningful changes to the project.
 - `src/app/api/health/route.ts` — self-contained.
 
 ### Fixed
+- Window title-bar dragging suppressed clicks on the traffic-light controls, leaving them
+  visibly live but inert. Drag gestures now ignore interactive elements.
+- Utility windows opened at full desktop size, completely covering the routed window.
 - The terminal homepage rendered no `h1` — every section was an `h2` prompt. The top prompt
   is now the `h1`, carrying the person's name as its screen-reader label.
 - The editorial hero animated its heading from `opacity: 0`, fading in the page's LCP text.
@@ -83,6 +111,7 @@ Record meaningful changes to the project.
 - `overflow-x: hidden` on `html, body` was masking real horizontal-overflow bugs.
 
 ### Removed
+- `PageShell` — superseded by each theme's `PageKit`, so all eight routes are themed.
 - `SiteHeader` / `SiteFooter` — superseded by per-theme layouts.
 - Fabricated content: `src/data/blog.ts` (three invented articles), `src/app/blog/**`,
   and the invented marketing copy on `/about` and `/contact`.
@@ -93,6 +122,9 @@ Record meaningful changes to the project.
 - `src/app/opengraph-image.tsx` — superseded by `app/og/route.tsx`.
 
 ### Notes
+- **ADR-013's code-splitting claim is corrected.** Measurement shows all four themes ship an
+  identical bundle; per-theme splitting does not work (ISS-026). The dynamic imports keep
+  the server graph tidy but do not split client code.
 - Phase 0 Discovery and Phase 1 Foundation complete and verified
   (`typecheck`, `lint`, `build` clean; all routes checked against a production server).
 - No portfolio content exists yet; Phase 2 builds the typed model while the content

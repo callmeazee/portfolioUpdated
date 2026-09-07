@@ -15,18 +15,14 @@ import type { ThemeSections } from "@/types/views";
  * (theme.md §14). Combined with ADR-007's server-side resolution, a visitor
  * downloads exactly one theme.
  *
- * PHASE STATUS: Editorial and Terminal are implemented. Brutalist and Notion
- * deliberately point at Editorial for now, which is the documented fallback
- * behaviour (theme.md §15) rather than a stub. They are NOT visually identical
- * in the meantime — each already carries its own token values, so selecting
- * Brutalist today yields the editorial layout in the brutalist palette.
- * Phases 6–7 replace each entry with its own module.
+ * All four themes are implemented. Each loader points at its own module, so a
+ * visitor downloads exactly one environment.
  */
 const loaders: Record<ThemeId, () => Promise<{ sections: ThemeSections }>> = {
   editorial: () => import("@/components/themes/editorial"),
   terminal: () => import("@/components/themes/terminal"),
-  brutalist: () => import("@/components/themes/editorial"),
-  notion: () => import("@/components/themes/editorial"),
+  brutalist: () => import("@/components/themes/brutalist"),
+  notion: () => import("@/components/themes/notion"),
 };
 
 export async function getThemeSections(id: ThemeId): Promise<ThemeSections> {

@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 
-import { EmptyState, PageShell } from "@/components/shared/PageShell";
 import { experience } from "@/content";
 import { createSeoMetadata } from "@/lib/seo";
+import { getPageKit } from "@/themes/page-kit";
 
 export const metadata: Metadata = createSeoMetadata({
   title: "Experience",
@@ -10,23 +10,26 @@ export const metadata: Metadata = createSeoMetadata({
   canonicalPath: "/experience",
 });
 
-export default function ExperiencePage() {
+export default async function ExperiencePage() {
+  const { Page, Card, Empty } = await getPageKit();
+
   return (
-    <PageShell title="Experience">
+    <Page title="Experience">
       {experience.length === 0 ? (
-        <EmptyState>Experience details pending.</EmptyState>
+        <Empty>Experience details pending.</Empty>
       ) : (
-        <ol className="mt-lg grid gap-lg">
+        <ol className="mt-lg">
           {experience.map((entry) => (
-            <li key={entry.id} className="border-t border-border pt-md">
-              <h2 className="text-heading-s font-display">{entry.role}</h2>
-              <p className="text-body-s text-muted">
-                {entry.company} · {entry.startDate} – {entry.endDate}
-              </p>
-            </li>
+            <Card
+              key={entry.id}
+              eyebrow={entry.company}
+              title={entry.role}
+              description={entry.description}
+              meta={`${entry.startDate} – ${entry.endDate}`}
+            />
           ))}
         </ol>
       )}
-    </PageShell>
+    </Page>
   );
 }

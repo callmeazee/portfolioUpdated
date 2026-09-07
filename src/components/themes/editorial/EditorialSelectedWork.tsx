@@ -10,7 +10,7 @@ import type { Project } from "@/types/content";
 export function EditorialSelectedWork({ projects }: { projects: Project[] }) {
   return (
     <section
-      className={`border-b border-border ${projects.length === 0 ? "py-xl" : "py-2xl"}`}
+      className={`editorial-in-view border-b border-border ${projects.length === 0 ? "py-xl" : "py-2xl"}`}
       aria-labelledby="selected-work"
     >
       <div className="flex items-baseline justify-between gap-md">

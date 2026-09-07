@@ -2,7 +2,7 @@ import Link from "next/link";
 
 import type { HomeViewProps } from "@/types/views";
 
-import { PromptHeading, TerminalOutput, TerminalPending, TerminalWindow } from "./TerminalWindow";
+import { PromptHeading, TerminalOutput, TerminalPending } from "./TerminalWindow";
 
 /**
  * The same seven sections as every other theme, in the same order
@@ -23,8 +23,9 @@ export function TerminalHome({
   contact,
 }: HomeViewProps) {
   return (
-    <main id="main" className="py-lg">
-      <TerminalWindow title={`azeez@portfolio — ~ — ${featuredProjects.length} projects`}>
+    /* No window chrome here — MacWindow provides it (ADR-016). */
+    <main id="main" className="p-md sm:p-lg">
+      <>
         {/* whoami */}
         <PromptHeading id="whoami" command="whoami" label={profile.fullName} level={1} />
         <TerminalOutput>
@@ -166,7 +167,7 @@ export function TerminalHome({
             </Link>
           </p>
         </TerminalOutput>
-      </TerminalWindow>
+      </>
     </main>
   );
 }

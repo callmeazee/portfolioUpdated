@@ -42,7 +42,8 @@ function SectionFrame({
 
   return (
     <section
-      className={last ? padding : `border-b border-border ${padding}`}
+      /* editorial-in-view: a scroll-driven reveal, CSS-only (theme.md §6.5). */
+      className={`editorial-in-view ${last ? padding : `border-b border-border ${padding}`}`}
       aria-labelledby={id}
     >
       <div className="grid gap-lg lg:grid-cols-12">

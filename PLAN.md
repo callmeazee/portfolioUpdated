@@ -35,11 +35,20 @@ Build the premium recruiter-facing editorial/minimal theme.
 ## Phase 5 — Terminal
 Build the macOS-inspired developer theme. Avoid fake hacker clichés.
 
-## Phase 6 — Neo-Brutalist
-Build the bold high-contrast brutalist theme with strong borders, typography and hard shadows.
+## Phase 6 — Theme Environments
+Rebuild all four themes as simulated environments rather than presentation layers (ADR-015).
+Phases 4–5 delivered the content-correct structure; this delivers the mechanics.
 
-## Phase 7 — Notion
-Build the documentation/workspace-inspired theme with clear information hierarchy.
+- **6.0 Runtime & contract** — window state machine, drag/resize, reduced-motion and
+  persistence hooks; `Shell` + `PageKit` contract so every route is themed (ADR-018).
+- **6.1 macOS** — dock, menu bar, windows that open/close/minimize/zoom (ADR-016).
+- **6.2 Notion** — sidebar tree, blocks, toggles, Table/Board/Gallery database views.
+- **6.3 Neo-Brutalist** — physical buttons, displacement, real filtering.
+- **6.4 Editorial** — scroll choreography, reading progress, view transitions.
+- **6.5 Hardening** — per-theme JS budgets, accessibility sweep, mobile QA.
+
+## Phase 7 — (folded into Phase 6)
+The former Notion phase is now step 6.2.
 
 ## Phase 8 — Theme Integration
 Verify every theme supports the same important content, routes, deep links, persistence and accessibility.

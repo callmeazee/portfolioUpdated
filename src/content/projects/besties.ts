@@ -24,6 +24,11 @@ export const besties: Project = {
     "A real-time social platform with messaging, online presence and audio/video communication.",
   technologies: [],
   links: {
+    /*
+     * Interview 2026-09-02 confirmed this project has public links, but the URLs
+     * have not been supplied yet — so these stay "pending", not "unavailable".
+     * The two states make different claims and must not be conflated (ADR-011).
+     */
     live: { status: "pending" },
     repository: { status: "pending" },
   },

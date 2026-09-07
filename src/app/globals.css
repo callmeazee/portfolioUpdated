@@ -180,3 +180,109 @@
     visibility: hidden;
   }
 }
+
+/*
+ * NOTION FONT SWITCHER (ADR-015)
+ *
+ * Notion offers Default / Serif / Mono per page. Replicated with open system
+ * stacks — Notion's own faces are licensed and cannot ship. Scoped to the
+ * workspace element rather than :root so it never leaks into another theme.
+ */
+[data-notion-font="serif"] {
+  --font-body: ui-serif, Georgia, Cambria, "Times New Roman", serif;
+  --font-display: ui-serif, Georgia, Cambria, "Times New Roman", serif;
+}
+
+[data-notion-font="mono"] {
+  --font-body: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
+  --font-display: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
+}
+
+/*
+ * BRUTALIST MOTION — intensity MEDIUM/HIGH (theme.md §8.4)
+ *
+ * The press, hover displacement and hard-shadow shifts are all plain CSS state
+ * on the elements themselves. Only the marquee needs a keyframe.
+ */
+@layer components {
+  .brutal-marquee-track {
+    animation: brutal-marquee 28s linear infinite;
+  }
+}
+
+@keyframes brutal-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    /* The track renders its content twice, so -50% is a seamless loop. */
+    transform: translateX(-50%);
+  }
+}
+
+/*
+ * The global reduced-motion block clamps animation to 0.01ms, which would snap
+ * the marquee to its end position and leave content off-screen. It is stopped
+ * outright instead and the strip becomes a normal scrollable row — motion
+ * removed, information preserved (design.md §17).
+ */
+@media (prefers-reduced-motion: reduce) {
+  .brutal-marquee-track {
+    animation: none !important;
+    transform: none !important;
+  }
+}
+
+/*
+ * EDITORIAL MOTION — intensity LOW (theme.md §6.5)
+ *
+ * Scroll-driven animations, not scroll listeners. `animation-timeline` is
+ * driven by the compositor, so these reveals cost no JavaScript at all — which
+ * is what keeps Editorial the lightest theme (README §15 explicitly wants it
+ * free of other themes' animation payloads).
+ *
+ * Everything is gated twice: on `@supports`, so browsers without scroll-driven
+ * timelines simply show the content; and on `prefers-reduced-motion`, so the
+ * reveals never run for someone who asked for stillness. Content is never
+ * dependent on an animation completing (README §24).
+ *
+ * The hero is deliberately excluded — ISS-021 was exactly this mistake, fading
+ * in the page's LCP text.
+ */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    @layer components {
+      .editorial-in-view {
+        animation: editorial-enter linear both;
+        animation-timeline: view();
+        animation-range: entry 5% cover 25%;
+      }
+
+      .editorial-progress {
+        transform-origin: 0 50%;
+        animation: editorial-progress linear both;
+        animation-timeline: scroll();
+      }
+    }
+  }
+}
+
+@keyframes editorial-enter {
+  from {
+    opacity: 0;
+    transform: translateY(1rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes editorial-progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}

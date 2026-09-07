@@ -1,9 +1,7 @@
 import Link from "next/link";
 
 import { ThemeSwitcher } from "@/components/shared/ThemeSwitcher";
-import { getAllThemes } from "@/themes/registry";
-import { getActiveThemeId } from "@/themes/server";
-import type { ThemeLayoutProps } from "@/types/views";
+import type { ThemeShellProps } from "@/types/views";
 
 /**
  * Editorial chrome: a quiet top bar and a generous footer. design.md §24 gives
@@ -12,13 +10,14 @@ import type { ThemeLayoutProps } from "@/types/views";
  * The switcher's MECHANISM is shared; its presentation belongs to the theme
  * (theme.md §18), hence the `segmented` variant design.md §33 specifies here.
  */
-export async function EditorialLayout({
+export function EditorialShell({
   children,
   profile,
   contact,
   navigation,
-}: ThemeLayoutProps) {
-  const active = await getActiveThemeId();
+  activeTheme,
+  themes,
+}: ThemeShellProps) {
 
   return (
     <>
@@ -43,7 +42,7 @@ export async function EditorialLayout({
             </ul>
           </nav>
 
-          <ThemeSwitcher themes={getAllThemes()} active={active} variant="segmented" />
+          <ThemeSwitcher themes={themes} active={activeTheme} variant="segmented" />
         </div>
       </header>
 

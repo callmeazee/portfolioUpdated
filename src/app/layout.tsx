@@ -2,9 +2,10 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 
 import { navigation, siteConfig } from "@/config/site";
-import { contact, profile } from "@/content";
+import { contact, notes, profile, getAllProjects } from "@/content";
 import { createSeoMetadata } from "@/lib/seo";
 import { getThemeSections } from "@/themes/renderer";
+import { getAllThemes } from "@/themes/registry";
 import { getActiveThemeId } from "@/themes/server";
 
 import "./globals.css";
@@ -33,7 +34,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
    * visitor downloads one theme's markup and JavaScript, not four.
    */
   const theme = await getActiveThemeId();
-  const { Layout } = await getThemeSections(theme);
+  const { Shell } = await getThemeSections(theme);
 
   return (
     <html
@@ -45,9 +46,17 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <a href="#main" className="skip-link">
           Skip to content
         </a>
-        <Layout profile={profile} contact={contact} navigation={navigation}>
+        <Shell
+          profile={profile}
+          contact={contact}
+          navigation={navigation}
+          projects={getAllProjects()}
+          notes={notes}
+          activeTheme={theme}
+          themes={getAllThemes()}
+        >
           {children}
-        </Layout>
+        </Shell>
       </body>
     </html>
   );

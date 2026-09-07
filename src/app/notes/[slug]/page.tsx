@@ -1,30 +1,22 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import { PageShell } from "@/components/shared/PageShell";
 import { notes } from "@/content";
 import { createSeoMetadata } from "@/lib/seo";
+import { getPageKit } from "@/themes/page-kit";
 
 /*
- * No `generateStaticParams` here — deliberately.
- *
- * ADR-007 reads a cookie in the root layout to resolve the theme, which makes
- * every route dynamic, so static param enumeration has no effect. Worse, while
- * `notes` is empty it actively broke this route: an empty param list led Next
- * to classify the segment as statically prerenderable, and an on-demand request
- * for an unknown slug then failed with DYNAMIC_SERVER_USAGE (a 500) instead of
- * rendering a 404.
- *
- * Reinstate this only if theme resolution ever becomes static-compatible.
+ * No `generateStaticParams` — under ADR-007 the root layout reads a cookie, so
+ * every route is dynamic and enumerating params buys nothing. With an empty
+ * notes list its presence also made Next classify this segment as prerenderable,
+ * which then failed at request time with DYNAMIC_SERVER_USAGE.
  */
 
 export async function generateMetadata(props: PageProps<"/notes/[slug]">): Promise<Metadata> {
   const { slug } = await props.params;
   const note = notes.find((entry) => entry.slug === slug);
 
-  if (!note) {
-    return createSeoMetadata({ title: "Note not found" });
-  }
+  if (!note) return createSeoMetadata({ title: "Note not found" });
 
   return createSeoMetadata({
     title: note.title,
@@ -40,19 +32,22 @@ export default async function NotePage(props: PageProps<"/notes/[slug]">) {
   const { slug } = await props.params;
   const note = notes.find((entry) => entry.slug === slug);
 
-  if (!note) {
-    notFound();
-  }
+  if (!note) notFound();
+
+  const { Page, Prose } = await getPageKit();
 
   return (
-    <PageShell title={note.title} intro={note.summary}>
-      <div className="mt-lg grid max-w-[65ch] gap-md">
-        {note.body.map((paragraph, i) => (
-          <p key={i} className="text-body-m">
-            {paragraph}
-          </p>
-        ))}
+    <Page
+      title={note.title}
+      intro={note.summary}
+      breadcrumb={[
+        { label: "Notes", href: "/notes" },
+        { label: note.title, href: `/notes/${note.slug}` },
+      ]}
+    >
+      <div className="mt-lg">
+        <Prose paragraphs={note.body} />
       </div>
-    </PageShell>
+    </Page>
   );
 }

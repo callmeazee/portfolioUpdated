@@ -3,7 +3,7 @@ import Link from "next/link";
 import type { CaseStudy, TechnicalSection } from "@/types/content";
 import type { ProjectViewProps } from "@/types/views";
 
-import { PromptHeading, TerminalOutput, TerminalPending, TerminalWindow } from "./TerminalWindow";
+import { PromptHeading, TerminalOutput, TerminalPending } from "./TerminalWindow";
 
 /**
  * The same case-study information hierarchy as every other theme
@@ -171,14 +171,14 @@ export function TerminalProjectDetail({ project }: ProjectViewProps) {
   ];
 
   return (
-    <main id="main" className="py-lg">
+    <main id="main" className="p-md sm:p-lg">
       <p className="mb-sm font-mono text-caption text-muted">
         <Link href="/projects" className="hover:text-accent">
           ../projects
         </Link>
       </p>
 
-      <TerminalWindow title={`azeez@portfolio — ~/projects/${project.slug}`}>
+      <>
         <h1 className="font-mono text-heading-m font-normal">
           <span aria-hidden="true" className="text-muted">
             azeez@portfolio ~/projects %{" "}
@@ -262,7 +262,7 @@ export function TerminalProjectDetail({ project }: ProjectViewProps) {
             </ul>
           </Section>
         </div>
-      </TerminalWindow>
+      </>
     </main>
   );
 }
