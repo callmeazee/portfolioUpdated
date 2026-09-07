@@ -35,7 +35,15 @@ export const cloudspire: Project = {
     repository: { status: "pending" },
   },
 
-  media: { hero: null, screenshots: [], architectureDiagram: null },
+  media: {
+    /* Captured from the live deployment on 2026-09-02. */
+    hero: {
+      src: "/projects/cloudspire-ai.webp",
+      alt: "The CloudSpire AI landing page, showing the cloud cost optimisation product.",
+    },
+    screenshots: [],
+    architectureDiagram: null,
+  },
 
   caseStudy: {
     overview: [

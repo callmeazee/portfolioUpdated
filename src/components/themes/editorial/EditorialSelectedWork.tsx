@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { ProjectImage } from "@/components/shared/ProjectImage";
 import type { Project } from "@/types/content";
 
 /**
@@ -51,6 +52,14 @@ export function EditorialSelectedWork({ projects }: { projects: Project[] }) {
                       </p>
                     )}
                   </div>
+
+                  {project.media.hero ? (
+                    <ProjectImage
+                      asset={project.media.hero}
+                      className="lg:col-span-7 lg:col-start-2"
+                      sizes="(min-width: 1024px) 55vw, 100vw"
+                    />
+                  ) : null}
 
                   <div className="lg:col-span-3 lg:col-start-10">
                     <p className="font-mono text-micro tracking-[0.14em] text-muted uppercase">

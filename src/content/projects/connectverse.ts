@@ -34,7 +34,15 @@ export const connectverse: Project = {
     repository: { status: "pending" },
   },
 
-  media: { hero: null, screenshots: [], architectureDiagram: null },
+  media: {
+    /* Captured from the live deployment on 2026-09-02. */
+    hero: {
+      src: "/projects/connectverse.webp",
+      alt: "The ConnectVerse landing page, showing the social feed's features.",
+    },
+    screenshots: [],
+    architectureDiagram: null,
+  },
 
   caseStudy: {
     overview: [

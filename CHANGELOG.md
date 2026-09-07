@@ -5,6 +5,9 @@ Record meaningful changes to the project.
 ## 2026-09-02
 
 ### Added
+- **Project imagery.** Hero screenshots captured from all five live deployments, served
+  through `next/image`, and rendered by every theme in its own idiom.
+
 - **Real portfolio content.** Profile, contact, experience, skills, education, engineering
   areas and five projects, sourced from the supplied résumé. Publish blockers 6 → 0.
 

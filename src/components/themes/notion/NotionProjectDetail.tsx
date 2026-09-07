@@ -1,6 +1,8 @@
 import type { CaseStudy, TechnicalSection } from "@/types/content";
 import type { ProjectViewProps } from "@/types/views";
 
+import { ProjectImage } from "@/components/shared/ProjectImage";
+
 import { NotionCallout, NotionProperties, NotionTag, NotionToggle } from "./NotionBlocks";
 import { NotionDocument, NotionHeading } from "./NotionPage";
 
@@ -136,6 +138,11 @@ export function NotionProjectDetail({ project }: ProjectViewProps) {
 
   return (
     <NotionDocument icon="🗂" title={project.title} description={project.shortDescription}>
+      {/* Notion pages have covers; this is the closest honest equivalent. */}
+      {project.media.hero ? (
+        <ProjectImage asset={project.media.hero} className="mb-lg rounded-md" priority />
+      ) : null}
+
       <NotionProperties
         items={[
           { label: "Type", value: <NotionTag>{project.category}</NotionTag> },

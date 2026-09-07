@@ -3,6 +3,8 @@ import Link from "next/link";
 import type { CaseStudy, TechnicalSection } from "@/types/content";
 import type { ProjectViewProps } from "@/types/views";
 
+import { ProjectImage } from "@/components/shared/ProjectImage";
+
 import { BrutalBlock, BrutalEmpty, BrutalLabel } from "./BrutalPrimitives";
 
 /**
@@ -187,6 +189,14 @@ export function BrutalProjectDetail({ project }: ProjectViewProps) {
       ) : (
         <p className="mt-md max-w-[45ch] text-body-l font-medium">{project.shortDescription}</p>
       )}
+
+      {project.media.hero ? (
+        <ProjectImage
+          asset={project.media.hero}
+          className="mt-lg border-2 border-foreground shadow-(--shadow-md)"
+          priority
+        />
+      ) : null}
 
       <dl className="mt-lg grid grid-cols-2 border-2 border-foreground md:grid-cols-4">
         {meta.map(([label, value], index) => (

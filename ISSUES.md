@@ -8,7 +8,8 @@
 | ID | Issue | Status | Priority | Notes |
 |---|---|---|---|---|
 | ISS-005 | Production domain unknown | 🔴 | High | Set `NEXT_PUBLIC_SITE_URL` (see `.env.example`). Verified end to end that it propagates to canonical URLs, sitemap, robots.txt, OG image and JSON-LD. The résumé lists myportfolio-t3hc.onrender.com, but that is the previous portfolio — confirm before using it |
-| ISS-008 | Project media missing | 🟡 | Medium | No screenshots or architecture diagrams. Every project has a live URL, so captures are straightforward; empty states degrade honestly meanwhile |
+| ISS-008 | Two weak screenshots | 🟡 | Low | All five heroes captured from the live deployments. Two are weak and worth replacing at the same paths: `filemoon-cloud.webp` is only the sign-in form, and `movieplas.webp` has empty cards because TMDB did not return. Architecture diagrams still absent |
+| ISS-037 | Project names differ from the deployed apps | 🟡 | Low | The résumé says "Snitcher" but the site brands itself **SNITCH.**; it says "MoviePlas" but the site says **Movie Plus**. The résumé names are used — confirm which is canonical |
 | ISS-009 | Case study depth | 🟡 | High | Each featured project has an overview and feature list from the résumé, but `problem`, `solution`, `architecture`, `challenges` and `learnings` are empty. These sections are what a senior engineer actually reads (CLAUDE.md §37) and need the subject's own account |
 | ISS-030 | Résumé PDF not in the repository | 🟡 | Medium | `/resume` renders an honest empty state. Drop the PDF at `public/azeez-ahmed-khan.pdf` and set `contact.resume.url` |
 | ISS-031 | "2+ years" vs one listed role | 🟡 | Medium | The résumé states 2+ years of experience but lists only Affy Cloud from Jul 2025. Earlier work is unrepresented on `/experience`; not invented |

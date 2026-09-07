@@ -3,6 +3,8 @@ import Link from "next/link";
 import type { CaseStudy, TechnicalSection } from "@/types/content";
 import type { ProjectViewProps } from "@/types/views";
 
+import { ProjectImage } from "@/components/shared/ProjectImage";
+
 import { EditorialToc } from "./EditorialToc";
 
 /**
@@ -233,6 +235,15 @@ export function EditorialProjectDetail({ project }: ProjectViewProps) {
       ) : (
         <p className="mt-md max-w-[50ch] text-body-l text-muted">{project.shortDescription}</p>
       )}
+
+      {project.media.hero ? (
+        <ProjectImage
+          asset={project.media.hero}
+          className="mt-lg"
+          /* Above the fold on this route — the LCP candidate. */
+          priority
+        />
+      ) : null}
 
       <dl className="mt-lg grid grid-cols-2 gap-md border-t border-border pt-md sm:grid-cols-4">
         {metadata.map(([label, value]) => (

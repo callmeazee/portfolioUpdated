@@ -25,7 +25,15 @@ export const filemoon: Project = {
     repository: { status: "pending" },
   },
 
-  media: { hero: null, screenshots: [], architectureDiagram: null },
+  media: {
+    /* Captured from the live deployment on 2026-09-02. */
+    hero: {
+      src: "/projects/filemoon-cloud.webp",
+      alt: "The FileMoon Cloud sign-in screen.",
+    },
+    screenshots: [],
+    architectureDiagram: null,
+  },
   caseStudy: null,
   featured: false,
   order: 4,

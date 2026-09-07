@@ -28,7 +28,15 @@ export const snitcher: Project = {
     repository: { status: "pending" },
   },
 
-  media: { hero: null, screenshots: [], architectureDiagram: null },
+  media: {
+    /* Captured from the live deployment on 2026-09-02. */
+    hero: {
+      src: "/projects/snitcher.webp",
+      alt: "The Snitcher storefront, showing the product catalogue with pricing.",
+    },
+    screenshots: [],
+    architectureDiagram: null,
+  },
 
   caseStudy: {
     overview: [

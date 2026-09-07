@@ -19,7 +19,7 @@
 | 8 Theme Integration | 🟢 |
 | 9 Case Studies | 🟡 |
 | 10 Accessibility | 🟢 |
-| 11 Performance | 🟡 |
+| 11 Performance | 🟢 |
 | 12 SEO | 🟢 |
 | 13 Testing | 🟢 |
 | 14 Production QA | 🟢 |
@@ -29,6 +29,7 @@ Legend: ⬜ Not Started · 🟡 In Progress · 🟢 Complete · 🔴 Blocked · 
 
 ## Current Work
 - **Active task:** Case-study depth (ISS-009) and the deployment domain (ISS-005).
+- Project imagery is in place; `next/image` serves AVIF/WebP at responsive sizes.
 - **Test suite:** `npm test` (39 unit) · `npm run test:e2e` (110 Playwright).
 - **Blockers:** ISS-002 (no real portfolio content). The editorial theme is structurally
   complete but renders mostly empty states, so it cannot be judged as a design until real
@@ -523,6 +524,30 @@ they appear on `/projects` without crowding the homepage (README §30 rule 14).
 **Three unit tests were asserting emptiness** and failed on contact with real data. They now
 assert the mechanism — that pending links are leaf gaps, that featured projects satisfy the
 publish gate — rather than a snapshot of what happened to be missing.
+
+### 2026-09-02 — Project imagery (ISS-008, Phase 11)
+
+Captured all five project heroes from the live deployments at 1440×900 @2x, resized to
+1600px and encoded as WebP (11–101KB each). `next/image` re-encodes to AVIF/WebP per
+request at responsive sizes, so design.md §29 is satisfied without hand-tuning variants.
+
+No theme rendered imagery before this; each now does so in its own idiom — a full-bleed
+lead image in editorial, a bordered hard-shadowed block in brutalist, a page cover and
+gallery thumbnails in Notion, and an `open <file>` preview in terminal. The `ProjectImage`
+primitive is shared because the mechanics (accurate `sizes`, a reserved 16:10 frame to
+avoid layout shift) are easy to get wrong; only the framing is per-theme.
+
+**One capture was rejected rather than shipped.** MoviePlas first rendered its own error
+state — "Failed to load home content" — which would have made the project look broken. The
+capture was retried through the app's retry control and only kept once the error was gone.
+A screenshot is a claim about the work like any other.
+
+**Two remain weak and are flagged (ISS-008):** FileMoon Cloud shows only its sign-in form,
+and MoviePlas has empty cards because TMDB did not return. Both are real and honest, and
+both are one file replacement away from better.
+
+Also noted: the deployed apps brand themselves **SNITCH.** and **Movie Plus**, while the
+résumé says Snitcher and MoviePlas (ISS-037).
 
 ## Rules
 After every meaningful session, update completed work, current phase, blockers, decisions

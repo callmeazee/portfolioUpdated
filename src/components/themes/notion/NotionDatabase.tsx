@@ -4,6 +4,8 @@ import Link from "next/link";
 import { Columns3, LayoutGrid, Table2 } from "lucide-react";
 import { useMemo, useState } from "react";
 
+import Image from "next/image";
+
 import type { Project } from "@/types/content";
 
 import { NotionTag } from "./NotionBlocks";
@@ -191,9 +193,21 @@ export function NotionDatabase({ projects }: { projects: Project[] }) {
                 href={`/projects/${project.slug}`}
                 className="block h-full rounded-md border border-border bg-surface p-md hover:border-border-strong"
               >
-                <span className="grid h-20 place-items-center rounded-sm bg-surface-secondary text-muted">
-                  {/* No invented cover art — the record has no image yet. */}
-                  <span className="text-body-s italic">No cover</span>
+                <span className="relative block h-24 overflow-hidden rounded-sm bg-surface-secondary">
+                  {project.media.hero ? (
+                    <Image
+                      src={project.media.hero.src}
+                      alt={project.media.hero.alt}
+                      fill
+                      sizes="(min-width: 1024px) 20vw, 90vw"
+                      className="object-cover object-top"
+                    />
+                  ) : (
+                    /* No invented cover art if the record has no image. */
+                    <span className="grid h-full place-items-center text-body-s text-muted italic">
+                      No cover
+                    </span>
+                  )}
                 </span>
                 <span className="mt-sm block text-body-m font-medium">{project.title}</span>
                 <span className="mt-xs block text-body-s text-muted">

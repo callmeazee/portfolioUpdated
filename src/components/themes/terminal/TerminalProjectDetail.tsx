@@ -3,6 +3,8 @@ import Link from "next/link";
 import type { CaseStudy, TechnicalSection } from "@/types/content";
 import type { ProjectViewProps } from "@/types/views";
 
+import { ProjectImage } from "@/components/shared/ProjectImage";
+
 import { PromptHeading, TerminalOutput, TerminalPending } from "./TerminalWindow";
 
 /**
@@ -208,6 +210,20 @@ export function TerminalProjectDetail({ project }: ProjectViewProps) {
               ))}
             </dl>
           </Section>
+
+          {project.media.hero ? (
+            <Section
+              id="preview"
+              command={`open ${project.media.hero.src.split("/").pop()}`}
+              label="Screenshot"
+            >
+              <ProjectImage
+                asset={project.media.hero}
+                className="max-w-[52rem] rounded-sm border border-border"
+                priority
+              />
+            </Section>
+          ) : null}
 
           <Section id="stack" command="cat stack" label="Technology stack">
             {project.technologies.length === 0 ? (
