@@ -111,6 +111,8 @@ Record meaningful changes to the project.
 - `overflow-x: hidden` on `html, body` was masking real horizontal-overflow bugs.
 
 ### Removed
+- **`motion` dependency.** Dock magnification and the brutalist cursor are hand-rolled;
+  188KB → 153KB gzipped for every theme. ADR-017 reversed (ISS-027).
 - `PageShell` — superseded by each theme's `PageKit`, so all eight routes are themed.
 - `SiteHeader` / `SiteFooter` — superseded by per-theme layouts.
 - Fabricated content: `src/data/blog.ts` (three invented articles), `src/app/blog/**`,

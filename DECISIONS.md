@@ -315,6 +315,25 @@ sanctioned by `design.md` §12.
 in roughly a hundred lines (`src/themes/runtime/use-drag.ts`), and a dependency would be
 dead weight.
 
+**REVERSED (2026-09-02, step 6.5): `motion` has been removed.**
+
+This decision rested on "imported only inside the theme modules that use them so the
+renderer's code-splitting keeps Editorial light". ISS-026 showed that premise is false —
+all four themes share one client bundle, so `motion` shipped to Editorial and Notion, which
+never call it. Measurement put it at ~39KB gzipped: **a fifth of all JavaScript for two
+decorative effects**, which fails CLAUDE.md §35's cost test.
+
+Both effects are now hand-rolled and still cost zero React renders per frame: dock
+magnification writes sizes directly to the DOM inside one rAF, with CSS smoothing between
+them; the brutalist cursor is an exponential-smoothing lerp in a rAF loop.
+
+Result: **188KB → 153KB gzipped for every theme**, one fewer chunk, one fewer dependency.
+`lucide-react` stays — it tree-shakes to the icons actually used and is sanctioned by
+design.md §12.
+
+Tests now assert both effects work as well as that they are correctly disabled under
+`prefers-reduced-motion`; the previous suite only checked the latter.
+
 ## ADR-018 — PageKit: Themed Primitives for Generic Routes
 **Status:** Accepted · 2026-09-02
 

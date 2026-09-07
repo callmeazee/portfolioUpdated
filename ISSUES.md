@@ -21,7 +21,7 @@
 |---|---|---|---|---|
 | ISS-025 | App-shell themes reset scroll on switch | 🟡 | Low | macOS and Notion scroll an inner container, so window scroll is 0 after switching into them. Within README §3's "where practical"; the route is preserved and tested |
 | ISS-023 | Themes lack real mechanics | 🟡 | Medium | Phase 6 in progress (ADR-015). Steps 6.0–6.3 done. Editorial (6.4) and hardening (6.5) remain |
-| ISS-026 | Per-theme code splitting does not work | 🟡 | High | **Measured, not suspected:** all four themes ship a byte-identical set of 8 chunks (~622KB). ADR-013's claim is false and theme.md §14 is unmet. Cause: `renderer.ts` uses `import()` from a Server Component, and Next builds the client manifest statically per route, so every theme's client components land in one bundle. Candidate fixes: (a) load each theme's chrome through `next/dynamic` inside a client boundary — splits properly but pushes the editorial and brutalist shells into the client bundle, (b) route groups per theme with a proxy rewrite, giving four independent manifests — the option weighed and set aside during Phase 6 planning. Needs a decision before Phase 11 |
+| ISS-026 | JavaScript is not split per theme | 🟡 | Medium | **Measured.** Every theme ships an identical 8-chunk bundle: 622KB decoded, **188KB gzipped**. Cause: `renderer.ts` uses `import()` from a Server Component, and Next builds the client manifest statically per route, so all themes' client components share one graph. **Actual cost is smaller than first assumed:** theme-specific code is only ~22KB gz of the 188KB, so duplicate theme code wastes ~11KB gz. The larger waste was ISS-027 (now resolved: 188KB → 153KB gz). Remaining upside here is ~11KB gz, so this is low priority |
 
 ## Resolved
 
@@ -36,6 +36,7 @@
 | ISS-013 | Fabricated boilerplate content in repo | 2026-09-02 — removed (ADR-009) |
 | ISS-017 | Brutalist and Notion fall back to Editorial | 2026-09-02 — every theme now loads its own module; the renderer falls back nowhere |
 | ISS-016 | Non-home routes not themed | 2026-09-02 — `PageKit` (ADR-018) themes all eight routes; the neutral `PageShell` is deleted. Verified: `/engineering` renders terminal window chrome under the terminal theme and none under editorial |
+| ISS-027 | `motion` shipped to themes that never used it | 2026-09-02 — dependency removed; dock magnification and the brutalist cursor hand-rolled. 188KB → 153KB gzipped for every theme. ADR-017 reversed with the reasoning recorded |
 | ISS-014 | No accessibility baseline | 2026-09-02 — added in Phase 1, now verified in a browser (ISS-009) |
 | ISS-015 | Theme switching costs one server round-trip | 2026-09-02 — verified acceptable: switching preserves route and scroll position under test. Accepted consequence of ADR-007 |
 | ISS-019 | Command palette interaction unverified | 2026-09-02 — 8 Playwright tests: ⌘K and the visible button, Escape restoring focus, arrow keys, Enter navigation, the §7.3 vocabulary, `theme <id>`, `command not found`, and the Tab containment |

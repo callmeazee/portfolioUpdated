@@ -100,6 +100,24 @@ test.describe("brutalist motion and access", () => {
     await context.close();
   });
 
+  test("the cursor follower tracks the pointer when motion is allowed", async ({ page }) => {
+    await page.goto("/");
+
+    const cursor = page.locator("div.fixed.z-50.size-6");
+    await expect(cursor).toBeAttached();
+
+    await page.mouse.move(200, 200);
+    await page.waitForTimeout(300);
+    const first = await cursor.evaluate((el) => el.style.transform);
+
+    await page.mouse.move(700, 500);
+    await page.waitForTimeout(300);
+    const second = await cursor.evaluate((el) => el.style.transform);
+
+    expect(first).not.toBe("");
+    expect(second).not.toBe(first);
+  });
+
   test("the theme selector works without JavaScript", async ({ browser }) => {
     const context = await browser.newContext({ javaScriptEnabled: false });
     await context.addCookies([

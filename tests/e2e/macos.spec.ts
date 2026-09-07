@@ -149,6 +149,23 @@ test.describe("desktop accessibility", () => {
     await expect(routeWindow(page)).toBeHidden();
   });
 
+  test("dock magnification actually magnifies", async ({ page }) => {
+    await page.goto("/");
+
+    const item = page.getByRole("navigation", { name: "Dock" }).locator("[data-dock-item]").first();
+    const before = (await item.boundingBox())?.width ?? 0;
+    expect(before).toBeGreaterThan(0);
+
+    /* Hover the item itself: proximity is measured from the pointer. */
+    await item.hover();
+    await page.waitForTimeout(250);
+    const after = (await item.boundingBox())?.width ?? 0;
+
+    expect(after, `dock item did not grow on hover (${before} → ${after})`).toBeGreaterThan(
+      before + 5,
+    );
+  });
+
   test("dock magnification is skipped under reduced motion", async ({ browser }) => {
     const context = await browser.newContext({ reducedMotion: "reduce" });
     await context.addCookies([
@@ -157,12 +174,12 @@ test.describe("desktop accessibility", () => {
     const page = await context.newPage();
     await page.goto("/");
 
-    const item = page.getByRole("navigation", { name: "Dock" }).getByRole("link").first();
+    const item = page.getByRole("navigation", { name: "Dock" }).locator("[data-dock-item]").first();
     const before = await item.boundingBox();
 
     /* Hovering must not resize anything when motion is reduced. */
     await item.hover();
-    await page.waitForTimeout(200);
+    await page.waitForTimeout(250);
     const after = await item.boundingBox();
 
     expect(Math.abs((after?.width ?? 0) - (before?.width ?? 0))).toBeLessThan(2);

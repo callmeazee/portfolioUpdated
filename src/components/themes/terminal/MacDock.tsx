@@ -2,8 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { motion, useMotionValue, useSpring, useTransform, type MotionValue } from "motion/react";
-import { useRef } from "react";
+import { useCallback, useRef } from "react";
 
 import { useWindowManager } from "@/themes/runtime/window-manager";
 import { useReducedMotion } from "@/themes/runtime/use-reduced-motion";
@@ -11,9 +10,15 @@ import { useReducedMotion } from "@/themes/runtime/use-reduced-motion";
 /**
  * The dock, with genuine cursor magnification.
  *
- * Driven by motion values rather than React state: a pointermove handler that
- * called `setState` would re-render every item on every frame. `useMotionValue`
- * writes straight to the DOM, so magnification costs no renders at all.
+ * Hand-rolled rather than library-driven (ADR-017, revised): magnification is
+ * one distance calculation per item, and pulling in ~39KB gzipped of animation
+ * runtime for it failed CLAUDE.md §35's cost test once measurement showed the
+ * library shipped to all four themes rather than the two using it (ISS-027).
+ *
+ * Still zero React renders per frame — sizes are written straight to the DOM
+ * inside a single rAF, and CSS smooths between them. Width and height are
+ * animated rather than `transform: scale` so neighbours are pushed aside, which
+ * is what makes the effect read as a dock rather than a zoom.
  *
  * ACCESSIBILITY: this is a real `<nav>` of real `<Link>`s — the same
  * destinations as the menu bar, reachable by Tab with no pointer needed.
@@ -34,91 +39,45 @@ export interface DockItem {
   onActivate?: () => void;
 }
 
-function DockButton({
-  item,
-  mouseX,
-  isRunning,
-  isMinimized,
-  reducedMotion,
-}: {
-  item: DockItem;
-  mouseX: MotionValue<number>;
-  isRunning: boolean;
-  isMinimized: boolean;
-  reducedMotion: boolean;
-}) {
-  const ref = useRef<HTMLLIElement>(null);
-
-  const distance = useTransform(mouseX, (x) => {
-    const box = ref.current?.getBoundingClientRect();
-    if (!box) return INFLUENCE;
-    return x - (box.left + box.width / 2);
-  });
-
-  const target = useTransform(distance, [-INFLUENCE, 0, INFLUENCE], [BASE_SIZE, MAX_SIZE, BASE_SIZE], {
-    clamp: true,
-  });
-  const size = useSpring(target, { stiffness: 320, damping: 22, mass: 0.4 });
-
-  const content = (
-    <>
-      <span aria-hidden="true" className="grid size-full place-items-center">
-        {item.icon}
-      </span>
-      {/* Tooltip is decorative; the accessible name comes from the label below. */}
-      <span
-        aria-hidden="true"
-        className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 rounded-sm border border-border bg-surface px-xs py-0 font-mono text-micro whitespace-nowrap opacity-0 transition-opacity group-hover:opacity-100"
-      >
-        {item.label}
-      </span>
-      <span className="sr-only">
-        {item.label}
-        {isMinimized ? " (minimized)" : ""}
-      </span>
-    </>
-  );
-
-  return (
-    <motion.li
-      ref={ref}
-      style={reducedMotion ? { width: BASE_SIZE, height: BASE_SIZE } : { width: size, height: size }}
-      className="group relative flex items-end justify-center"
-    >
-      {item.href ? (
-        <Link
-          href={item.href}
-          aria-label={item.label}
-          className="grid size-full place-items-center rounded-md border border-border bg-surface-secondary text-accent"
-        >
-          {content}
-        </Link>
-      ) : (
-        <button
-          type="button"
-          onClick={item.onActivate}
-          aria-label={item.label}
-          aria-expanded={isRunning ? !isMinimized : undefined}
-          className="grid size-full place-items-center rounded-md border border-border bg-surface-secondary text-accent"
-        >
-          {content}
-        </button>
-      )}
-
-      {/* Running indicator — reflects real window state, not decoration. */}
-      <span
-        aria-hidden="true"
-        className={`absolute -bottom-2 size-1 rounded-full ${isRunning ? "bg-foreground" : "bg-transparent"}`}
-      />
-    </motion.li>
-  );
-}
-
 export function MacDock({ items }: { items: DockItem[] }) {
-  const mouseX = useMotionValue(Number.POSITIVE_INFINITY);
   const manager = useWindowManager();
   const reducedMotion = useReducedMotion();
   const pathname = usePathname();
+
+  const listRef = useRef<HTMLUListElement>(null);
+  const frame = useRef<number | null>(null);
+
+  const resize = useCallback((pointerX: number | null) => {
+    const list = listRef.current;
+    if (!list) return;
+
+    for (const item of list.querySelectorAll<HTMLElement>("[data-dock-item]")) {
+      let size = BASE_SIZE;
+
+      if (pointerX !== null) {
+        const box = item.getBoundingClientRect();
+        const distance = Math.abs(pointerX - (box.left + box.width / 2));
+        /* Linear falloff to zero at the influence radius. */
+        const proximity = Math.max(0, 1 - distance / INFLUENCE);
+        size = BASE_SIZE + (MAX_SIZE - BASE_SIZE) * proximity;
+      }
+
+      item.style.width = `${size}px`;
+      item.style.height = `${size}px`;
+    }
+  }, []);
+
+  const schedule = useCallback(
+    (pointerX: number | null) => {
+      if (reducedMotion) return;
+      if (frame.current !== null) cancelAnimationFrame(frame.current);
+      frame.current = requestAnimationFrame(() => {
+        frame.current = null;
+        resize(pointerX);
+      });
+    },
+    [reducedMotion, resize],
+  );
 
   return (
     /*
@@ -128,27 +87,67 @@ export function MacDock({ items }: { items: DockItem[] }) {
      */
     <nav aria-label="Dock" className="z-40 flex shrink-0 justify-center p-sm">
       <ul
-        onPointerMove={(event) => mouseX.set(event.clientX)}
-        onPointerLeave={() => mouseX.set(Number.POSITIVE_INFINITY)}
-        /*
-         * Nine items cannot fit 360px. The dock scrolls inside itself rather
-         * than overflowing the page, so mobile keeps every destination instead
-         * of hiding some (theme.md §12 wants a deliberate mobile design, not a
-         * truncated desktop one).
-         */
+        ref={listRef}
+        onPointerMove={(event) => schedule(event.clientX)}
+        onPointerLeave={() => schedule(null)}
         className="flex max-w-[calc(100vw-1.5rem)] items-end gap-sm overflow-x-auto overscroll-x-contain rounded-lg border border-border bg-surface/85 px-sm py-sm backdrop-blur"
       >
         {items.map((item) => {
           const window = manager.windows.find((w) => w.id === item.id);
+          const isRunning = window !== undefined || item.href === pathname;
+          const isMinimized = window?.minimized ?? false;
+
+          const content = (
+            <>
+              <span aria-hidden="true" className="grid size-full place-items-center">
+                {item.icon}
+              </span>
+              <span
+                aria-hidden="true"
+                className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 rounded-sm border border-border bg-surface px-xs py-0 font-mono text-micro whitespace-nowrap opacity-0 transition-opacity group-hover:opacity-100"
+              >
+                {item.label}
+              </span>
+              <span className="sr-only">
+                {item.label}
+                {isMinimized ? " (minimized)" : ""}
+              </span>
+            </>
+          );
+
           return (
-            <DockButton
+            <li
               key={item.id}
-              item={item}
-              mouseX={mouseX}
-              isRunning={window !== undefined || item.href === pathname}
-              isMinimized={window?.minimized ?? false}
-              reducedMotion={reducedMotion}
-            />
+              data-dock-item
+              style={{ width: BASE_SIZE, height: BASE_SIZE }}
+              className="group relative flex shrink-0 items-end justify-center transition-[width,height] duration-(--duration-fast) ease-out motion-reduce:transition-none"
+            >
+              {item.href ? (
+                <Link
+                  href={item.href}
+                  aria-label={item.label}
+                  className="grid size-full place-items-center rounded-md border border-border bg-surface-secondary text-accent"
+                >
+                  {content}
+                </Link>
+              ) : (
+                <button
+                  type="button"
+                  onClick={item.onActivate}
+                  aria-label={item.label}
+                  aria-expanded={isRunning ? !isMinimized : undefined}
+                  className="grid size-full place-items-center rounded-md border border-border bg-surface-secondary text-accent"
+                >
+                  {content}
+                </button>
+              )}
+
+              {/* Running indicator — reflects real window state, not decoration. */}
+              <span
+                aria-hidden="true"
+                className={`absolute -bottom-2 size-1 rounded-full ${isRunning ? "bg-foreground" : "bg-transparent"}`}
+              />
+            </li>
           );
         })}
       </ul>

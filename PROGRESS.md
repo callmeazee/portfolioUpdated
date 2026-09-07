@@ -29,7 +29,7 @@ Legend: ⬜ Not Started · 🟡 In Progress · 🟢 Complete · 🔴 Blocked · 
 
 ## Current Work
 - **Active task:** Blocked on content (ISS-002). Next engineering task is ISS-026.
-- **Test suite:** `npm test` (37 unit) · `npm run test:e2e` (67 Playwright).
+- **Test suite:** `npm test` (37 unit) · `npm run test:e2e` (69 Playwright).
 - **Blockers:** ISS-002 (no real portfolio content). The editorial theme is structurally
   complete but renders mostly empty states, so it cannot be judged as a design until real
   copy lands. Content status: **40 fields pending, 6 sections awaiting, 6 publish blockers.**
@@ -386,6 +386,30 @@ starts working, `themes currently share one bundle` will fail, and that failure 
 signal to replace it with a per-theme assertion.
 
 **Verification run:** `typecheck`, `lint`, `build` clean; 37 unit and 67 e2e tests pass.
+
+### 2026-09-02 — Bundle investigation and the `motion` reversal
+
+Investigating ISS-026 before fixing it changed both its priority and the fix.
+
+**Real numbers:** 622KB decoded is **188KB gzipped** over the wire. Theme-specific code is
+only ~22KB gz of that, so the duplicate-theme waste ISS-026 describes is ~11KB gz — I had
+filed it High; it is Medium at most, now corrected.
+
+**The larger waste was elsewhere.** `motion` was ~39KB gz — a fifth of all JavaScript — for
+exactly two decorative effects, shipped to all four themes because of the same splitting
+defect. ADR-017 approved it on the premise that per-theme imports would contain it; that
+premise was false, so the justification no longer held.
+
+**Removed.** Dock magnification and the brutalist cursor are hand-rolled, still writing to
+the DOM directly so neither costs a React render per frame. **188KB → 153KB gzipped for
+every theme**, one fewer chunk, one fewer dependency. ADR-017 carries the reversal and its
+reasoning; ISS-027 is resolved.
+
+**Test gap closed:** the suite previously only asserted these effects were *disabled* under
+reduced motion, never that they worked. Both now have positive tests — which mattered,
+because both were rewritten from scratch.
+
+**Verification run:** typecheck, lint, build clean; 37 unit and 69 e2e tests pass.
 
 ## Rules
 After every meaningful session, update completed work, current phase, blockers, decisions
