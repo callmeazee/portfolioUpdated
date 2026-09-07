@@ -1,5 +1,6 @@
 import type { Project } from "@/types/content";
 
+import { besties } from "./besties";
 import { cloudspire } from "./cloudspire";
 import { connectverse } from "./connectverse";
 import { filemoon } from "./filemoon";
@@ -21,4 +22,5 @@ export const projects: Project[] = [
   connectverse,
   filemoon,
   movieplas,
+  besties,
 ].sort((a, b) => a.order - b.order);

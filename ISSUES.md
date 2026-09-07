@@ -14,7 +14,8 @@
 | ISS-030 | Résumé PDF not in the repository | 🟡 | Medium | `/resume` renders an honest empty state. Drop the PDF at `public/azeez-ahmed-khan.pdf` and set `contact.resume.url` |
 | ISS-031 | "2+ years" vs one listed role | 🟡 | Medium | The résumé states 2+ years of experience but lists only Affy Cloud from Jul 2025. Earlier work is unrepresented on `/experience`; not invented |
 | ISS-032 | Two résumé entries interpreted | 🟡 | Low | Typos corrected ("Rags" → RAG, "integrayion" → integration) and "Vector" expanded to "Vector search". Confirm the last one is what was meant |
-| ISS-033 | Project names differ from the planning docs | 🟡 | High | The docs named the primary projects Besties / E-commerce Platform / CloudCost AI; the résumé names them ConnectVerse / Snitcher / CloudSpire AI with live URLs. Treated as renames of the same three. **Confirm** — if Besties is a separate project it needs adding back |
+| ISS-038 | Besties details need confirming | 🟡 | Medium | Besties is a distinct project (confirmed), but is absent from the résumé, so its stack and features come from README §§5/9/11 where the record is labelled an "example". Confirm the stack — particularly WebRTC — and supply a live/repo link if one exists |
+| ISS-039 | Further projects not yet supplied | 🟡 | Medium | The subject indicated more projects exist beyond the six recorded. Names, descriptions, stacks and links needed |
 | ISS-034 | Repository links unverified | 🟡 | Medium | Every project has a live URL from the résumé; none lists a public repo. Recorded as `pending`, not `unavailable` — those make different claims (ADR-011) |
 
 ## Open — scheduled work, not defects
@@ -42,7 +43,8 @@ resolved table). Everything still open is blocked on real content.
 | ISS-016 | Non-home routes not themed | 2026-09-02 — `PageKit` (ADR-018) themes all eight routes; the neutral `PageShell` is deleted. Verified: `/engineering` renders terminal window chrome under the terminal theme and none under editorial |
 | ISS-027 | `motion` shipped to themes that never used it | 2026-09-02 — dependency removed; dock magnification and the brutalist cursor hand-rolled. 188KB → 153KB gzipped for every theme. ADR-017 reversed with the reasoning recorded |
 | ISS-002 | No real portfolio content exists | 2026-09-02 — résumé supplied. Profile, contact, experience, skills, education, engineering areas and five projects populated. **0 publish blockers**; the site is now publishable. Depth remains as ISS-009 |
-| ISS-004 | Verify exact tech stack per project | 2026-09-02 — stacks taken from the résumé. Notably, the planning docs' WebRTC/audio-video claim for "Besties" is **absent** from the résumé's ConnectVerse and was not carried over |
+| ISS-033 | Project names differ from the planning docs | 2026-09-02 — resolved by asking rather than assuming: Besties is a **separate project**, not a rename of ConnectVerse. Re-added; the résumé names stand for the other three |
+| ISS-004 | Verify exact tech stack per project | 2026-09-02 — stacks taken from the résumé. The WebRTC/audio-video claim belongs to Besties, not ConnectVerse, and is recorded on the right project |
 | ISS-006 | Public contact details unknown | 2026-09-02 — email, GitHub and LinkedIn supplied and published; phone recorded but deliberately not rendered |
 | ISS-018 | Theme designs unproven against real content | 2026-09-02 — all four themes reviewed with real content. Two real defects found and fixed (below) |
 | ISS-035 | Editorial reveals hid on-screen content | 2026-09-02 — scroll-driven reveals animated from `opacity: 0`, leaving in-viewport sections invisible at common heights (0.01 at 1440×900). Now transform-only; the test varies viewport height, which is what exposed it |

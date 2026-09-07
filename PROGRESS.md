@@ -549,6 +549,27 @@ both are one file replacement away from better.
 Also noted: the deployed apps brand themselves **SNITCH.** and **Movie Plus**, while the
 résumé says Snitcher and MoviePlas (ISS-037).
 
+### 2026-09-02 — Besties restored; view-all in every theme
+
+**Besties is a distinct project, not a rename of ConnectVerse.** ISS-033 flagged the
+ambiguity rather than resolving it by assumption, and the assumption would have been wrong:
+merging them would have deleted a real project and attached its WebRTC/audio-video work to
+one that does not have it. Re-added as an unfeatured project (the résumé leads with the
+other three), with links `pending` rather than `unavailable` — the two make different
+claims.
+
+Its stack comes from README §§5/9/11, where the record is labelled an "example", so that is
+the one part warranting confirmation (ISS-038).
+
+**"View all projects" now exists in every theme**, each in its own idiom: an "All projects →"
+link in editorial, `ls projects --all` in terminal, "→ View all projects" in Notion, and a
+pressed button in brutalist. A cross-theme test asserts the link exists, navigates, and that
+/projects lists more than the featured three — so this cannot silently regress.
+
+Verified the homepage still shows only the featured three in every theme. Notion's sidebar
+lists all six, which is correct: that is the workspace page tree, persistent navigation on
+every page, not homepage content.
+
 ## Rules
 After every meaningful session, update completed work, current phase, blockers, decisions
 and meaningful changes. Never mark work complete without verification.

@@ -61,6 +61,14 @@ export function TerminalHome({
               ))}
             </ul>
           )}
+
+          {/* Only the featured projects are listed above (README §30 rule 14). */}
+          <p className="mt-md font-mono text-body-s">
+            <Link href="/projects" className="text-accent hover:underline">
+              ls projects --all
+            </Link>
+            <span className="text-muted"> — view all projects</span>
+          </p>
         </TerminalOutput>
 
         {/* cat skills */}

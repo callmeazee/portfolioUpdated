@@ -5,6 +5,10 @@ Record meaningful changes to the project.
 ## 2026-09-02
 
 ### Added
+- **Besties** restored as a distinct project after confirmation that it is not a rename of
+  ConnectVerse.
+- **"View all projects"** on the homepage of every theme, with a cross-theme test.
+
 - **Project imagery.** Hero screenshots captured from all five live deployments, served
   through `next/image`, and rendered by every theme in its own idiom.
 

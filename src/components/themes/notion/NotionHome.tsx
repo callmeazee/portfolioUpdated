@@ -41,6 +41,11 @@ export function NotionHome({
       <section aria-labelledby="work">
         <NotionHeading id="work">Selected work</NotionHeading>
         <NotionDatabase projects={featuredProjects} />
+        <p className="mt-sm text-body-s">
+          <Link href="/projects" className="text-muted hover:underline">
+            → View all projects
+          </Link>
+        </p>
       </section>
 
       <section aria-labelledby="engineering">

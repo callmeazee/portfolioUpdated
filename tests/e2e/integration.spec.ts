@@ -101,6 +101,31 @@ for (const theme of THEMES) {
 }
 
 test.describe("cross-theme consistency", () => {
+  test("every theme offers a route from the homepage to all projects", async ({ browser }) => {
+    /*
+     * README §30 rule 14 — the homepage shows only the strongest work, so each
+     * theme must provide a way through to the rest. The wording and styling are
+     * per-theme; the destination is not.
+     */
+    for (const theme of THEMES) {
+      const page = await browser.newPage();
+      await withTheme(page, theme);
+      await page.goto("/");
+
+      const toAll = page.locator('main a[href="/projects"]').first();
+      await expect(toAll, `${theme} has no homepage link to /projects`).toBeVisible();
+
+      await toAll.click();
+      await expect(page).toHaveURL(/\/projects$/);
+
+      /* And that page must list more than the featured three. */
+      const listed = await page.locator('a[href^="/projects/"]').count();
+      expect(listed, `${theme} /projects listed ${listed} projects`).toBeGreaterThan(3);
+
+      await page.close();
+    }
+  });
+
   test("all four themes expose the same seven home sections", async ({ browser }) => {
     const perTheme: Record<string, string[]> = {};
 

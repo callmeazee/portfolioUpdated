@@ -5,7 +5,7 @@ import { useMemo, useState } from "react";
 
 import type { Project } from "@/types/content";
 
-import { BrutalEmpty, BrutalLabel } from "./BrutalPrimitives";
+import { BrutalButton, BrutalEmpty, BrutalLabel } from "./BrutalPrimitives";
 
 /**
  * Project filtering and sorting — the theme's real functionality, not
@@ -132,6 +132,11 @@ export function BrutalProjectGrid({ projects }: { projects: Project[] }) {
           ))}
         </ul>
       )}
+
+      {/* Only the featured projects are shown above (README §30 rule 14). */}
+      <p className="mt-lg">
+        <BrutalButton href="/projects">View all projects →</BrutalButton>
+      </p>
     </section>
   );
 }

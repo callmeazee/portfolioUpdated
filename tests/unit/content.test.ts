@@ -36,7 +36,7 @@ describe("project accessors", () => {
 
   it("keeps the additional projects off the homepage (README §30 rule 14)", () => {
     const unfeatured = getAllProjects().filter((project) => !project.featured);
-    expect(unfeatured.map((p) => p.slug)).toEqual(["filemoon-cloud", "movieplas"]);
+    expect(unfeatured.map((p) => p.slug)).toEqual(["filemoon-cloud", "movieplas", "besties"]);
   });
 });
 
