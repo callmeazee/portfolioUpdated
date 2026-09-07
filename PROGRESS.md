@@ -1,7 +1,7 @@
 # Portfolio Development Progress
 
 ## Current Status
-- **Phase:** 8, 10, 13 complete; 14 in progress → everything else blocked on content (ISS-002)
+- **Phase:** 12 and 14 complete. Every phase except 9 and 15 is done; both are blocked on content
 - **Overall:** Four environments, integration-verified across every route, zero axe violations. Content records still unfilled.
 - **Last Updated:** 2026-09-02
 
@@ -20,17 +20,17 @@
 | 9 Case Studies | ⬜ |
 | 10 Accessibility | 🟢 |
 | 11 Performance | 🟡 |
-| 12 SEO | ⬜ |
+| 12 SEO | 🟢 |
 | 13 Testing | 🟢 |
-| 14 Production QA | 🟡 |
+| 14 Production QA | 🟢 |
 | 15 Deployment | ⬜ |
 
 Legend: ⬜ Not Started · 🟡 In Progress · 🟢 Complete · 🔴 Blocked · ⚪ Skipped
 
 ## Current Work
-- **Active task:** All engineering issues are closed or accepted. Phases 9, 12 (structured
-  data), 15 and the design verification in 18 are blocked on content (ISS-002).
-- **Test suite:** `npm test` (37 unit) · `npm run test:e2e` (103 Playwright).
+- **Active task:** None available. Phases 9 (case studies) and 15 (deployment) are the only
+  incomplete phases, and both are blocked on ISS-002.
+- **Test suite:** `npm test` (37 unit) · `npm run test:e2e` (110 Playwright).
 - **Blockers:** ISS-002 (no real portfolio content). The editorial theme is structurally
   complete but renders mostly empty states, so it cannot be judged as a design until real
   copy lands. Content status: **40 fields pending, 6 sections awaiting, 6 publish blockers.**
@@ -464,6 +464,32 @@ every navigation and would be precisely the "random loading screen" CLAUDE.md §
 bad. Recorded so the omission reads as a decision rather than an oversight.
 
 **ISS-025 — won't fix**, with the reasoning already tested and documented.
+
+### 2026-09-02 — Phases 12 (SEO) and 14 (Production QA)
+
+**Structured data.** `Person` and `WebSite` on every page, `CreativeWork` on project pages,
+built from the canonical content layer and emitted by the root layout — so all four themes
+publish an identical machine-readable identity (README §16), verified by test.
+
+No-fabrication matters more here than anywhere else, because search engines read this as
+assertions of fact. Every field is omitted unless a real value exists: no `email`, no
+`sameAs`, and CloudCost AI emits **no** `CreativeWork` at all because its description is
+still pending — an entry would assert nothing. Tests cover both.
+
+**Production QA.** A console-error and page-error sweep across four themes × five routes on
+a production build. It found nothing, which is the useful result: the theme system renders
+server-side defaults it corrects on the client — the macOS clock, the ⌘K label, every
+`usePersistentUi` value — and each was a hydration mismatch waiting to happen. theme.md §16
+asks for "no console errors"; this is that check, automated.
+
+**Deployment prep.** `.env.example` and a Deployment section in `ARCHITECTURE.md`. Verified
+end to end that setting `NEXT_PUBLIC_SITE_URL` propagates correctly to canonical URLs, the
+sitemap, robots.txt, the OG image URL and the JSON-LD — so ISS-005 is provably a
+one-variable fix rather than a hope.
+
+**Deliberately not deployable.** `getContentStatus().isPublishable` is false while any
+featured project carries placeholder fields (ADR-006). It currently reports 6 blockers, and
+that gate is documented as the pre-deploy check.
 
 ## Rules
 After every meaningful session, update completed work, current phase, blockers, decisions

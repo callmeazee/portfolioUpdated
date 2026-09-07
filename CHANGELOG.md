@@ -5,6 +5,11 @@ Record meaningful changes to the project.
 ## 2026-09-02
 
 ### Added
+- **Structured data (Phase 12).** `Person`, `WebSite` and per-project `CreativeWork` JSON-LD,
+  identical across themes, with every field omitted unless a real value exists.
+- **Production QA (Phase 14).** Console-error and page-error sweep across four themes on a
+  production build; `.env.example` and a Deployment section in `ARCHITECTURE.md`.
+
 - **Error boundaries.** `error.tsx` with a working retry and `global-error.tsx` for
   root-layout failures; 404 now renders through the active theme's PageKit (ISS-029).
 - ADR-019 — per-theme code splitting accepted as debt after `next/dynamic` was measured and

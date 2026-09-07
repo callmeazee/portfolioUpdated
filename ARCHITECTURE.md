@@ -147,3 +147,32 @@ Before adding a dependency, check whether existing tooling or native platform fe
 - No unnecessary rewrites.
 - No premature abstraction.
 - No silent architectural changes.
+
+## Deployment
+
+**Required configuration.** `NEXT_PUBLIC_SITE_URL` must be set to the production origin
+before deploying. It is the single source for canonical URLs, the sitemap, `robots.txt` and
+the Open Graph image URL; unset, they all resolve against `http://localhost:3000`. See
+`.env.example`.
+
+**Rendering.** Every themed route renders dynamically, because the root layout reads the
+theme cookie (ADR-007). `robots.txt` and `sitemap.xml` remain static. There is nothing to
+revalidate: the content layer is compiled TypeScript, so a content change is a deploy.
+
+**Pre-deploy gate.** `getContentStatus().isPublishable` must be true — it is false while any
+featured project still carries placeholder fields (ADR-006). At the time of writing it
+reports 6 blockers, so the site is deliberately not deployable yet.
+
+**Verification before shipping**
+
+```
+npm run typecheck && npm run lint && npm test && npm run build && npm run test:e2e
+```
+
+The e2e suite runs against a real production build, so it exercises what actually ships:
+every theme on every route, the accessibility audit, per-theme JavaScript budgets, and a
+console-error sweep that would catch hydration mismatches.
+
+**Known debt at deploy time** — see `ISSUES.md`: all four themes share one JavaScript bundle
+(ADR-019, ~16KB gz of avoidable payload), and switching into an app-shell theme resets
+scroll position (ISS-025).

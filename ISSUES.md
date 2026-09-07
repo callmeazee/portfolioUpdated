@@ -10,7 +10,7 @@
 | ISS-002 | No real portfolio content exists | 🔴 | Critical | **40 fields pending, 6 sections awaiting, 6 publish blockers.** Blocks Phases 6–9 and deployment. Filled via the content interview (ADR-006) |
 | ISS-003 | Verify project/deployment links | 🔴 | Medium | Use only verified URLs. Absence is marked explicitly, never invented (content.md §25) |
 | ISS-004 | Verify exact tech stack per project | 🔴 | High | Required before any case study claims a technology. Stacks are deliberately unfilled until then |
-| ISS-005 | Production domain unknown | 🔴 | High | `siteConfig.url` falls back to `http://localhost:3000`. Set `NEXT_PUBLIC_SITE_URL` before deploy or canonicals, sitemap and OG URLs will be wrong |
+| ISS-005 | Production domain unknown | 🔴 | High | Set `NEXT_PUBLIC_SITE_URL` (see `.env.example`). Verified end to end that it propagates to canonical URLs, sitemap, robots.txt, OG image and JSON-LD — a one-variable fix once the domain exists |
 | ISS-006 | Public contact details unknown | 🔴 | High | Email/GitHub/LinkedIn pending. Only intentionally public details get published (content.md §36) |
 | ISS-008 | Project media missing | 🔴 | Medium | No screenshots, architecture diagrams, favicon or résumé PDF |
 | ISS-018 | Theme designs unproven against real content | 🔴 | Medium | Structure and responsive behaviour are now verified in a browser, but the designs render mostly empty states. They cannot be judged as designs until ISS-002 clears |
@@ -27,10 +27,10 @@ resolved table). Everything still open is blocked on real content.
 | ISS-023 | Themes lacked real mechanics | 2026-09-02 — Phase 6 complete. Four simulated environments with working mechanics, each covered by its own e2e suite |
 | ISS-025 | App-shell themes reset scroll on switch | 2026-09-02 — ⚪ Won't fix. macOS and Notion scroll an inner container, so window scroll is 0 by definition. Within README §3's "where practical"; the route is preserved and tested |
 | ISS-026 | JavaScript is not split per theme | 2026-09-02 — ⚪ Accepted debt (ADR-019). `next/dynamic` was implemented and measured: it split nothing and added ~2KB. Remaining upside is ~16KB gz of 153KB, against a routing-layer rewrite |
+| ISS-028 | Structured data not implemented | 2026-09-02 — `Person`, `WebSite` and per-project `CreativeWork` JSON-LD, identical across themes. Fields omitted unless real; enriches automatically as content lands |
 | ISS-029 | No error boundary | 2026-09-02 — `error.tsx` and `global-error.tsx` added; 404 now renders through the active theme's PageKit. Deliberately no `loading.tsx`: pages render instantly from a static content layer, so a loading shell would be the "random loading screen" CLAUDE.md §39 prohibits |
 | ISS-001 | Complete repository discovery | 2026-09-02 — Phase 0 report delivered and approved |
 | ISS-007 | No test tooling | 2026-09-02 — Vitest (23 unit) + Playwright (31 e2e). `npm test`, `npm run test:e2e` |
-| ISS-028 | Structured data not implemented | 🔴 | Low | README §25 asks for structured data "where genuinely useful". A Person schema needs a real domain, email and profile URLs to be worth emitting — blocked on ISS-002/005/006 |
 | ISS-009 | Visual/responsive QA not performed | 2026-09-02 — run in Chromium. Focus visibility across all four themes, one `h1` per page, reduced motion, and no horizontal overflow at 360px on 6 routes × 4 themes. Screenshots reviewed; two real defects found and fixed (below) |
 | ISS-010 | Themed shadows need explicit variable syntax | 2026-09-02 — convention now enforced by a unit test that fails on any bare `shadow-*` utility, alongside tests for hard-coded colours and the theme/content boundary |
 | ISS-011 | Broken Open Graph image on every page | 2026-09-02 — replaced by the `/og` route handler (ADR-010) |

@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { getProjectBySlug } from "@/content";
+import { JsonLd } from "@/components/shared/JsonLd";
 import { createSeoMetadata } from "@/lib/seo";
+import { projectJsonLd } from "@/lib/structured-data";
 import { getThemeSections } from "@/themes/renderer";
 import { getActiveThemeId } from "@/themes/server";
 
@@ -42,5 +44,10 @@ export default async function ProjectPage(props: PageProps<"/projects/[slug]">) 
 
   const { ProjectDetail } = await getThemeSections(await getActiveThemeId());
 
-  return <ProjectDetail project={project} />;
+  return (
+    <>
+      <JsonLd data={projectJsonLd(project.slug)} />
+      <ProjectDetail project={project} />
+    </>
+  );
 }
