@@ -682,6 +682,36 @@ not catch it (ISS-043).
 No change to this repository: both fixes belong to the projects themselves. Recorded so they
 are actionable rather than vague.
 
+### 2026-09-08 — Snitcher case study, written from source
+
+Asked to write the case studies directly. Much of that is derivable and much of it is not,
+so the line was drawn at evidence.
+
+**Snitcher's repository is public, so its architecture was read rather than imagined.**
+Architecture, frontend, backend, database, infrastructure and security sections are now
+written, every claim traceable to a file in `callmeazee/snitcher`. The genuinely
+interesting findings were worth surfacing: orders snapshot their items at purchase time so
+later product edits cannot rewrite history; prices are a reusable embedded sub-schema with a
+currency enum; variant attributes use a Map so new attributes need no migration;
+authentication re-loads the user per request rather than trusting the token payload; and the
+whole commerce path is server-authoritative — amount and coupon resolved server-side, then
+the Razorpay signature verified with the platform's HMAC helper.
+
+The stack recorded on the site was also wrong by omission: Google OAuth via Passport,
+ImageKit, Multer, express-validator and bcryptjs were all in use and none were listed.
+
+**`problem`, `challenges` and `learnings` are still empty, deliberately.** They are the
+author's own account and cannot be read out of a repository. Inventing them is the specific
+failure CLAUDE.md §9 exists to prevent, and it is the kind that collapses in an interview.
+
+**A security defect was found while reading (ISS-045):** Snitcher's CORS configuration
+builds an allow-list but returns `callback(null, true)` on every branch including the
+fallback, so all origins are accepted while appearing restricted — with `credentials: true`
+and cookie auth behind it.
+
+**Besties could not be treated the same way (ISS-044):** its repository returns 404
+unauthenticated, so it is private.
+
 ## Rules
 After every meaningful session, update completed work, current phase, blockers, decisions
 and meaningful changes. Never mark work complete without verification.
