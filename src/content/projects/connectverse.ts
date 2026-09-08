@@ -64,6 +64,8 @@ export const connectverse: Project = {
       "Real-time interactions",
     ],
     architecture: null,
+    /* No diagram: the architecture has not been established from source. */
+    diagram: null,
     frontend: null,
     backend: null,
     database: null,

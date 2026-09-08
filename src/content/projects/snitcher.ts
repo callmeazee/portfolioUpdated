@@ -93,6 +93,46 @@ export const snitcher: Project = {
         "The React front end is organised by feature, with app-level state kept apart from feature components.",
       ],
     },
+    diagram: {
+      caption:
+        "The browser talks only to the Express API, which owns every decision that matters commercially. Requests pass through validation, then a controller, then either a service (Razorpay, ImageKit) or the DAO layer, which is the only code that touches MongoDB. The order amount is computed here from the stored cart — never accepted from the client — and Razorpay's response is signature-checked before a payment is marked paid.",
+      layers: [
+        {
+          label: "Client",
+          nodes: [{ id: "spa", label: "React SPA", detail: "Vite, deployed on Vercel" }],
+        },
+        {
+          label: "API — Express",
+          nodes: [
+            { id: "routes", label: "Routes", detail: "auth · products · cart" },
+            { id: "validators", label: "Validators", detail: "express-validator" },
+            { id: "controllers", label: "Controllers" },
+            { id: "services", label: "Services + DAO", detail: "Razorpay · ImageKit · queries" },
+          ],
+        },
+        {
+          label: "Data",
+          nodes: [
+            { id: "mongo", label: "MongoDB", detail: "users · products · carts · payments" },
+          ],
+        },
+        {
+          label: "Third party",
+          nodes: [
+            { id: "razorpay", label: "Razorpay", detail: "checkout" },
+            { id: "imagekit", label: "ImageKit", detail: "product imagery" },
+            { id: "google", label: "Google OAuth", detail: "sign-in" },
+          ],
+        },
+      ],
+      flows: [
+        { from: "React SPA", to: "Express API", label: "JWT in an httpOnly cookie" },
+        { from: "Controllers", to: "MongoDB", label: "only ever through the DAO layer" },
+        { from: "Express API", to: "Razorpay", label: "order created server-side from the stored cart" },
+        { from: "Razorpay", to: "Express API", label: "signature verified before payment is marked paid" },
+        { from: "Express API", to: "ImageKit", label: "uploads received by Multer, then offloaded" },
+      ],
+    },
     frontend: {
       summary:
         "A React single-page application built with Vite, organised by feature rather than by file type, and deployed as a static bundle on Vercel.",

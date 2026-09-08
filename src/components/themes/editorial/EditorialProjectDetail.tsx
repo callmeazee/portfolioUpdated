@@ -5,6 +5,8 @@ import type { ProjectViewProps } from "@/types/views";
 
 import { ProjectImage } from "@/components/shared/ProjectImage";
 
+import { ArchitectureDiagram } from "@/components/shared/ArchitectureDiagram";
+
 import { EditorialToc } from "./EditorialToc";
 
 /**
@@ -92,6 +94,11 @@ function CaseStudyBody({ caseStudy }: { caseStudy: CaseStudy }) {
       ) : null}
 
       <Technical id="architecture" title="Architecture" section={caseStudy.architecture} />
+      {caseStudy.diagram ? (
+        <div className="border-t border-border py-lg">
+          <ArchitectureDiagram diagram={caseStudy.diagram} />
+        </div>
+      ) : null}
       <Technical id="frontend" title="Frontend" section={caseStudy.frontend} />
       <Technical id="backend" title="Backend" section={caseStudy.backend} />
       <Technical id="database" title="Database" section={caseStudy.database} />

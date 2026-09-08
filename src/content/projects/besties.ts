@@ -68,6 +68,53 @@ export const besties: Project = {
         "The REST surface is documented with Swagger and served from the API itself.",
       ],
     },
+    diagram: {
+      caption:
+        "The client holds two connections: ordinary HTTP to the Express API, and a Socket.IO connection authenticated at the handshake from the JWT cookie. Three socket modules run over it — chat, presence and call signalling — and each joins the socket to a room named after the user's own id, so events address a person rather than a browser tab. Signalling only introduces the two peers; once connected, call media flows directly between browsers and never passes through the server.",
+      layers: [
+        {
+          label: "Client",
+          nodes: [
+            { id: "spa", label: "React SPA", detail: "TypeScript, SWR, deployed on Vercel" },
+          ],
+        },
+        {
+          label: "Real time — Socket.IO",
+          nodes: [
+            { id: "chat", label: "Chat", detail: "messages and attachments" },
+            { id: "presence", label: "Presence", detail: "who is online" },
+            { id: "signal", label: "Signalling", detail: "offer · answer · ICE" },
+          ],
+        },
+        {
+          label: "API — Express",
+          nodes: [
+            { id: "routes", label: "Routes + controllers", detail: "auth · chat · friends · posts" },
+            { id: "auth", label: "Auth middleware", detail: "access and refresh tokens" },
+          ],
+        },
+        {
+          label: "Data",
+          nodes: [
+            { id: "mongo", label: "MongoDB", detail: "auth · chat · friends · posts" },
+          ],
+        },
+        {
+          label: "Third party",
+          nodes: [
+            { id: "s3", label: "AWS S3", detail: "media, via presigned URLs" },
+            { id: "twilio", label: "Twilio", detail: "ICE servers for NAT traversal" },
+          ],
+        },
+      ],
+      flows: [
+        { from: "React SPA", to: "Socket.IO", label: "JWT verified at the handshake, then joined to a room keyed by user id" },
+        { from: "Signalling", to: "Peer browser", label: "offer, answer and ICE candidates relayed between users" },
+        { from: "Peer browser", to: "Peer browser", label: "call media flows directly over WebRTC, never through the server" },
+        { from: "React SPA", to: "AWS S3", label: "attachments uploaded and fetched with presigned URLs" },
+        { from: "Chat", to: "MongoDB", label: "messages persisted on receipt, so history survives a disconnect" },
+      ],
+    },
     frontend: {
       summary:
         "A TypeScript React application using SWR for data fetching and a Socket.IO client for live updates, with rich-text authoring for posts.",

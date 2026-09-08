@@ -738,6 +738,28 @@ outgoing message can appear to do nothing.
 study on the site and is the only project demonstrating WebRTC. A new test asserts every
 featured project has a case study, so the homepage cannot advertise an empty page.
 
+### 2026-09-08 — Architecture diagrams
+
+Built the one item from the suggestion list that did not need new information: both diagrams
+are derived from repository source already read, so nothing is invented.
+
+**Modelled as data, not shipped as images.** design.md §28 asks that diagrams "use the same
+visual language as the active theme" and be "readable, responsive, accessible where
+practical, labeled" — a PNG satisfies none of those. Described as layers and flows, the same
+diagram renders in all four themes from semantic tokens, reflows at any width, and is read
+aloud as ordinary text. Arrows are `aria-hidden` and each flow is also stated in words,
+since an arrow between two boxes conveys nothing to a screen reader (design.md §36).
+
+Adding the field made TypeScript name all four case studies that needed it — the two without
+a source read carry `diagram: null` rather than a guess (ISS-050).
+
+**A real bug surfaced while reviewing the result.** The editorial header is `sticky top-0`
+and the case study has a contents rail. Clicking "Architecture" scrolled the heading to
+y=1px — underneath the 62px header, so the heading navigated to was the one thing hidden.
+Two other links appeared fine only because the page could not scroll further. Fixed with
+`scroll-margin-top` on anchor targets, with a regression test that measures the landing
+position against the header height.
+
 ## Rules
 After every meaningful session, update completed work, current phase, blockers, decisions
 and meaningful changes. Never mark work complete without verification.

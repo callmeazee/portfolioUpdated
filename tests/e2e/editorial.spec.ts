@@ -73,6 +73,31 @@ test.describe("editorial", () => {
     }
   });
 
+  test("contents links land the heading clear of the sticky header", async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.goto("/projects/besties", { waitUntil: "networkidle" });
+
+    const headerHeight = await page
+      .locator("header")
+      .first()
+      .evaluate((el) => el.getBoundingClientRect().height);
+
+    /*
+     * Without scroll-margin-top the target scrolls to y≈0, i.e. underneath the
+     * sticky header — the heading you clicked is the one thing hidden.
+     */
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await page
+      .getByRole("navigation", { name: "On this page" })
+      .getByRole("link", { name: "Architecture" })
+      .click();
+    await page.waitForTimeout(600);
+
+    const top = await page.locator("#architecture").evaluate((el) => el.getBoundingClientRect().top);
+    expect(top, `heading landed at ${Math.round(top)}px, header is ${Math.round(headerHeight)}px`).
+      toBeGreaterThanOrEqual(headerHeight);
+  });
+
   test("contents links work before hydration", async ({ browser }) => {
     const context = await browser.newContext({ javaScriptEnabled: false });
     await context.addCookies([

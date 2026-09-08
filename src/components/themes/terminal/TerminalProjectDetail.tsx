@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { CaseStudy, TechnicalSection } from "@/types/content";
 import type { ProjectViewProps } from "@/types/views";
 
+import { ArchitectureDiagram } from "@/components/shared/ArchitectureDiagram";
 import { ProjectImage } from "@/components/shared/ProjectImage";
 
 import { PromptHeading, TerminalOutput, TerminalPending } from "./TerminalWindow";
@@ -104,6 +105,11 @@ function CaseStudyBody({ caseStudy }: { caseStudy: CaseStudy }) {
       ) : null}
 
       <Technical id="architecture" name="architecture" section={caseStudy.architecture} />
+      {caseStudy.diagram ? (
+        <Section id="diagram" command="cat architecture.txt" label="Architecture diagram">
+          <ArchitectureDiagram diagram={caseStudy.diagram} />
+        </Section>
+      ) : null}
       <Technical id="frontend" name="frontend" section={caseStudy.frontend} />
       <Technical id="backend" name="backend" section={caseStudy.backend} />
       <Technical id="database" name="database" section={caseStudy.database} />

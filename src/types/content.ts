@@ -128,6 +128,42 @@ export type PerformanceNotes =
   | { measured: false }
   | { measured: true; metrics: Array<{ label: string; value: string }> };
 
+/**
+ * An architecture diagram, modelled as data rather than shipped as an image.
+ *
+ * design.md §28 asks that diagrams "use the same visual language as the active
+ * theme" and be "readable, responsive, accessible where practical, labeled". A
+ * PNG can satisfy none of those: it cannot adopt the theme's palette, it does
+ * not reflow on a phone, and its content is invisible to a screen reader.
+ *
+ * Described as layers and flows, the same diagram renders in every theme from
+ * semantic tokens, reflows at any width, and is read aloud as ordinary text.
+ */
+export interface ArchitectureNode {
+  id: string;
+  label: string;
+  /** Optional second line — the technology, or what the node holds. */
+  detail?: string;
+}
+
+export interface ArchitectureLayer {
+  label: string;
+  nodes: ArchitectureNode[];
+}
+
+export interface ArchitectureFlow {
+  from: string;
+  to: string;
+  label?: string;
+}
+
+export interface ArchitectureDiagram {
+  /** Describes the whole diagram for anyone who cannot see it. */
+  caption: string;
+  layers: ArchitectureLayer[];
+  flows: ArchitectureFlow[];
+}
+
 /** Section order mirrors the case-study hierarchy in design.md §26. */
 export interface CaseStudy {
   overview: string[];
@@ -135,6 +171,8 @@ export interface CaseStudy {
   solution: string[];
   features: string[];
   architecture: TechnicalSection | null;
+  /** Rendered directly beneath the architecture section when present. */
+  diagram: ArchitectureDiagram | null;
   frontend: TechnicalSection | null;
   backend: TechnicalSection | null;
   database: TechnicalSection | null;

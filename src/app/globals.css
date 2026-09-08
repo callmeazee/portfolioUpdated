@@ -73,6 +73,19 @@
  */
 
 @layer base {
+  /*
+   * Anchor targets must clear the sticky header.
+   *
+   * The editorial header is `sticky top-0` and the case study has a contents
+   * rail linking to `#architecture`, `#security` and so on. Without this,
+   * clicking a contents link scrolled the heading to y=1px — directly beneath
+   * the header, so the heading you navigated to was the one thing you could not
+   * see. Set wider than the tallest theme header.
+   */
+  :where(main [id], main :target) {
+    scroll-margin-top: 5.5rem;
+  }
+
   /* Visible focus on every interactive element, in every theme. Never removed
      without replacement (design.md §15). */
   :focus-visible {

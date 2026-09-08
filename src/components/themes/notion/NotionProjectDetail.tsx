@@ -1,6 +1,7 @@
 import type { CaseStudy, TechnicalSection } from "@/types/content";
 import type { ProjectViewProps } from "@/types/views";
 
+import { ArchitectureDiagram } from "@/components/shared/ArchitectureDiagram";
 import { ProjectImage } from "@/components/shared/ProjectImage";
 
 import { NotionCallout, NotionProperties, NotionTag, NotionToggle } from "./NotionBlocks";
@@ -74,6 +75,7 @@ function CaseStudyBody({ caseStudy }: { caseStudy: CaseStudy }) {
       <section aria-labelledby="technical">
         <NotionHeading id="technical">Technical detail</NotionHeading>
         <Technical name="Architecture" section={caseStudy.architecture} />
+        {caseStudy.diagram ? <ArchitectureDiagram diagram={caseStudy.diagram} /> : null}
         <Technical name="Frontend" section={caseStudy.frontend} />
         <Technical name="Backend" section={caseStudy.backend} />
         <Technical name="Database" section={caseStudy.database} />
