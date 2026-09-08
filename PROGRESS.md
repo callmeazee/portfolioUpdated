@@ -655,6 +655,33 @@ after their text.
 The integration test now asserts the résumé *contains* the résumé rather than merely having
 the right heading.
 
+### 2026-09-08 — Diagnosing the linked projects
+
+Both remaining actionable items were about projects this portfolio links to, so both were
+investigated properly rather than reported as "broken".
+
+**MoviePlas: the diagnosis overturned the assumption.** It had been recorded as a failing
+TMDB integration. It is not — all four TMDB calls return 200. The failure is
+`movieplas-api.onrender.com/api/content/curated-movies` returning `net::ERR_ABORTED`. The
+backend is unreachable: two separate 120-second requests both timed out, and Render cold
+starts take roughly 50 seconds, so the service is down rather than asleep. Most likely
+suspended, or failing to boot on a missing `MONGO_URI` — `render.yaml` marks it `sync: false`,
+so it must be set by hand in the dashboard. The fix is in the movieplas repository (ISS-040).
+
+**A security finding came out of the same trace (ISS-042).** MoviePlas reads its TMDB key
+through a `VITE_`-prefixed variable, so Vite inlines it into the client bundle and it is
+visible in every request the deployed site makes. It is harvestable by anyone. It should be
+proxied through the backend that already exists. The value is deliberately not recorded
+anywhere in this repository (CLAUDE.md §34).
+
+**FileMoon: nothing better exists to capture.** Every unauthenticated route — `/`, `/signup`,
+`/dashboard` — is a sign-in or sign-up form, so the current screenshot is the best available
+without credentials. `/register` additionally returns raw JSON because the SPA rewrite does
+not catch it (ISS-043).
+
+No change to this repository: both fixes belong to the projects themselves. Recorded so they
+are actionable rather than vague.
+
 ## Rules
 After every meaningful session, update completed work, current phase, blockers, decisions
 and meaningful changes. Never mark work complete without verification.
