@@ -37,5 +37,5 @@ export const filemoon: Project = {
   },
   caseStudy: null,
   featured: false,
-  order: 4,
+  order: 5,
 };

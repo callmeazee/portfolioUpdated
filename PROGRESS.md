@@ -712,6 +712,32 @@ and cookie auth behind it.
 **Besties could not be treated the same way (ISS-044):** its repository returns 404
 unauthenticated, so it is private.
 
+### 2026-09-08 — Besties case study, and the challenge behind it
+
+The repository was made public and the reported challenge supplied directly, so both were
+used: the architecture read from source, the difficulty written from the author's account.
+
+**The stack was materially understated.** The earlier record came from a README block
+labelled an "example". The real project is TypeScript end to end, with Twilio issuing ICE
+servers, S3 presigned URLs for media, refresh-token rotation in its own middleware, Swagger
+docs and SWR on the client. Real-time behaviour is split into three separate Socket.IO
+modules — chat, presence and signalling — each authenticated from the handshake cookie, with
+users joined to a room keyed by their own id so events address a person rather than a tab.
+
+**The challenge is recorded in the author's own terms:** calls and messages that silently
+stopped responding. That framing is honest about what makes real-time work hard — nothing
+throws, the socket is open, the event fires, and the interface simply does not change.
+
+**Reading the source located four concrete causes**, recorded as ISS-046 through ISS-049 for
+fixing in that repository. Two match the reported symptom exactly: the video socket's
+`disconnect` handler only logs and never tells the peer a call ended, so the other side waits
+forever; and the chat socket emits only to the recipient, never echoing to the sender, so an
+outgoing message can appear to do nothing.
+
+**Besties is now featured**, replacing ConnectVerse on the homepage — it has the deepest case
+study on the site and is the only project demonstrating WebRTC. A new test asserts every
+featured project has a case study, so the homepage cannot advertise an empty page.
+
 ## Rules
 After every meaningful session, update completed work, current phase, blockers, decisions
 and meaningful changes. Never mark work complete without verification.

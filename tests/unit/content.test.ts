@@ -26,17 +26,25 @@ describe("project accessors", () => {
     expect(getProjectBySlug("does-not-exist")).toBeUndefined();
   });
 
-  it("features exactly the three projects the résumé leads with (README §11)", () => {
+  it("features exactly three projects, led by the ones with real case studies", () => {
     expect(getFeaturedProjects().map((p) => p.slug)).toEqual([
       "cloudspire-ai",
       "snitcher",
-      "connectverse",
+      "besties",
     ]);
+  });
+
+  it("only features projects that have a case study", () => {
+    /* The homepage is the strongest work (README §30 rule 14); a featured
+       project with nothing behind it wastes the slot. */
+    for (const project of getFeaturedProjects()) {
+      expect(project.caseStudy, `${project.slug} has no case study`).not.toBeNull();
+    }
   });
 
   it("keeps the additional projects off the homepage (README §30 rule 14)", () => {
     const unfeatured = getAllProjects().filter((project) => !project.featured);
-    expect(unfeatured.map((p) => p.slug)).toEqual(["filemoon-cloud", "movieplas", "besties"]);
+    expect(unfeatured.map((p) => p.slug)).toEqual(["connectverse", "filemoon-cloud", "movieplas"]);
   });
 });
 

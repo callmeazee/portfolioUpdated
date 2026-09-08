@@ -36,5 +36,5 @@ export const movieplas: Project = {
   },
   caseStudy: null,
   featured: false,
-  order: 5,
+  order: 6,
 };

@@ -75,6 +75,7 @@ export const connectverse: Project = {
     learnings: [],
   },
 
-  featured: true,
-  order: 3,
+  /* Unfeatured now that Besties carries the real-time story with a full case study. */
+  featured: false,
+  order: 4,
 };
