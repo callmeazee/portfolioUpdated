@@ -64,7 +64,13 @@ export function TerminalHome({
 
           {/* Only the featured projects are listed above (README §30 rule 14). */}
           <p className="mt-md font-mono text-body-s">
-            <Link href="/projects" className="text-accent hover:underline">
+            {/*
+              Always underlined, not only on hover: this link sits inside a text
+              block, so colour alone would be its only distinction — axe flagged
+              it as `link-in-text-block` (WCAG 1.4.1, "do not use colour as the
+              only visual means of conveying information").
+            */}
+            <Link href="/projects" className="text-accent underline">
               ls projects --all
             </Link>
             <span className="text-muted"> — view all projects</span>

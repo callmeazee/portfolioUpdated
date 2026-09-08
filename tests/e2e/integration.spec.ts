@@ -99,11 +99,16 @@ for (const theme of THEMES) {
        * Rendered from the content layer rather than linking a PDF, so it must
        * actually contain the résumé — experience, skills, projects, education.
        */
+      /*
+       * Case-insensitive: the terminal theme lowercases definition terms as a
+       * presentation choice, so asserting exact casing would test the styling
+       * rather than whether the content is there.
+       */
       const main = page.locator("#main");
-      await expect(main).toContainText("Affy Cloud");
-      await expect(main).toContainText("Redux Toolkit");
-      await expect(main).toContainText("Snitcher");
-      await expect(main).toContainText("RGPV");
+      await expect(main).toContainText(/Affy Cloud/i);
+      await expect(main).toContainText(/Redux Toolkit/i);
+      await expect(main).toContainText(/Snitcher/i);
+      await expect(main).toContainText(/RGPV/i);
     });
   });
 }
