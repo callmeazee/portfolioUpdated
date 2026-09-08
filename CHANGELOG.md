@@ -5,6 +5,13 @@ Record meaningful changes to the project.
 ## 2026-09-02
 
 ### Added
+- **Generated favicon** (`app/icon.tsx`) replacing the Create Next App default.
+
+### Changed
+- **Open Graph card** now draws its title, positioning, location and availability from the
+  content layer instead of hand-written copy, so the share preview cannot drift from the site.
+
+### Added
 - **Core Web Vitals measured and guarded.** LCP ~700–770ms and CLS ≤0.0063 across all four
   themes under Slow 4G with 4× CPU throttling; a CLS regression test now covers each theme.
 - **README Quick start** — install, scripts, architecture summary, ahead of the spec.

@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 
-import { siteConfig } from "@/config/site";
+import { profile } from "@/content";
 
 export const size = {
   width: 1200,
@@ -31,21 +31,62 @@ export async function GET() {
           height: "100%",
           display: "flex",
           flexDirection: "column",
-          justifyContent: "center",
-          padding: "80px",
+          justifyContent: "space-between",
+          padding: "72px 80px",
           background: "#fafaf8",
           color: "#141414",
           fontFamily: "sans-serif",
         }}
       >
-        <div style={{ fontSize: 30, color: "#5c5a52", letterSpacing: 4 }}>
-          {siteConfig.author.toUpperCase()}
+        <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: 56,
+              height: 56,
+              borderRadius: 12,
+              background: "#2a4b8d",
+              color: "#ffffff",
+              fontSize: 32,
+              fontWeight: 700,
+            }}
+          >
+            {profile.displayName.slice(0, 1)}
+          </div>
+          <div style={{ fontSize: 28, color: "#5c5a52", letterSpacing: 3 }}>
+            {profile.fullName.toUpperCase()}
+          </div>
         </div>
-        <div style={{ fontSize: 92, fontWeight: 700, letterSpacing: -3, marginTop: 24 }}>
-          Full-Stack Developer
+
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <div style={{ fontSize: 86, fontWeight: 700, letterSpacing: -3, lineHeight: 1 }}>
+            {profile.title}
+          </div>
+          {/*
+            The real positioning statement from the content layer, not a
+            hand-written line that could drift from what the site says.
+          */}
+          {profile.positioning ? (
+            <div
+              style={{
+                fontSize: 30,
+                color: "#5c5a52",
+                marginTop: 26,
+                maxWidth: 940,
+                lineHeight: 1.4,
+              }}
+            >
+              {profile.positioning}
+            </div>
+          ) : null}
         </div>
-        <div style={{ fontSize: 34, color: "#5c5a52", marginTop: 28, maxWidth: 900 }}>
-          Web applications, SaaS products and real-time systems.
+
+        <div style={{ display: "flex", alignItems: "center", gap: 16, fontSize: 24, color: "#5c5a52" }}>
+          <div style={{ width: 40, height: 3, background: "#2a4b8d" }} />
+          {profile.location ?? ""}
+          {profile.availability ? ` · ${profile.availability}` : ""}
         </div>
       </div>
     ),

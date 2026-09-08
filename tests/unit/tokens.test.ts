@@ -41,12 +41,13 @@ describe("design token conventions", () => {
      * Two sanctioned exceptions, both cases where the token system is genuinely
      * unavailable rather than merely inconvenient:
      *
-     * - app/og/: rendered by Satori, which cannot read CSS custom properties.
+     * - app/og/ and app/icon.tsx: rendered by Satori, which cannot read CSS
+     *   custom properties.
      * - global-error.tsx: replaces the root layout, so it has no `data-theme`
      *   and no guarantee the stylesheet loaded. Depending on the theme system
      *   in the boundary that catches the theme system failing would be unwise.
      */
-    const EXCEPTIONS = ["app/og/", "global-error.tsx"];
+    const EXCEPTIONS = ["app/og/", "app/icon.tsx", "global-error.tsx"];
 
     for (const file of files) {
       if (EXCEPTIONS.some((exception) => file.includes(exception))) continue;

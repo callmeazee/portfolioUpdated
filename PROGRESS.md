@@ -607,6 +607,25 @@ Both existing captures were kept rather than replaced with worse ones.
 met a 1747-line product specification with no indication of what to run. The specification
 is untouched, below it.
 
+### 2026-09-08 — Share card and favicon
+
+Two things a visitor meets before the site itself, both still carrying defaults.
+
+**The Open Graph card** was hand-written copy ("Web applications, SaaS products and
+real-time systems") that could drift from what the site actually says. It now draws the
+title, positioning statement, location and availability from the content layer, so the
+share preview and the page cannot disagree. Restyled with a monogram and rule.
+
+**The favicon was the Create Next App default.** A portfolio wearing the framework's stock
+icon reads as unfinished. Replaced with a generated monogram (`app/icon.tsx`) whose initial
+comes from `profile.displayName`, so it stays tied to the content layer rather than being a
+committed binary.
+
+**Checked before changing:** `sitemap.xml`'s `lastModified: new Date()` looked like an SEO
+defect — a `lastmod` that changes every request tells crawlers nothing. It is not: the route
+is prerendered, so the value is baked at build time and stable across requests. Verified by
+fetching twice rather than assumed either way. Left alone.
+
 ## Rules
 After every meaningful session, update completed work, current phase, blockers, decisions
 and meaningful changes. Never mark work complete without verification.
