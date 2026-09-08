@@ -5,6 +5,12 @@ Record meaningful changes to the project.
 ## 2026-09-02
 
 ### Added
+- **Analytics (README §24).** First-party, cookie-free, anonymous event tracking with a
+  typed vocabulary and a single delegated click listener; honours DNT and GPC.
+- **Contact form (README §23).** Validation, honeypot, rate limiting, Resend delivery over
+  `fetch`. Rendered only when a provider is configured.
+- **RSS feed for notes**, generated from the content layer and discoverable from the head.
+- **Architecture diagrams** as structured data, rendered by every theme.
 - **Verified repository links** for Snitcher, FileMoon Cloud and MoviePlas, each confirmed
   against repo metadata or contents rather than matched by name.
 - **`/resume` renders the résumé** from the content layer, with print styles.

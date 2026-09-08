@@ -5,11 +5,18 @@ import { createSeoMetadata } from "@/lib/seo";
 import { formatDate } from "@/lib/utils";
 import { getPageKit } from "@/themes/page-kit";
 
-export const metadata: Metadata = createSeoMetadata({
-  title: "Notes",
-  description: "Technical notes and writing by Azeez Ahmed Khan.",
-  canonicalPath: "/notes",
-});
+export const metadata: Metadata = {
+  ...createSeoMetadata({
+    title: "Notes",
+    description: "Technical notes and writing by Azeez Ahmed Khan.",
+    canonicalPath: "/notes",
+  }),
+  /* Feed readers discover the feed from the head, not from a visible link. */
+  alternates: {
+    canonical: "/notes",
+    types: { "application/rss+xml": "/notes/rss.xml" },
+  },
+};
 
 export default async function NotesPage() {
   const { Page, Card, Empty } = await getPageKit();

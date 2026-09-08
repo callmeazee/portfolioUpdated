@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 
 import { navigation, siteConfig } from "@/config/site";
 import { contact, notes, profile, getAllProjects } from "@/content";
+import { AnalyticsClicks } from "@/components/shared/Analytics";
 import { JsonLd } from "@/components/shared/JsonLd";
 import { createSeoMetadata } from "@/lib/seo";
 import { personJsonLd, websiteJsonLd } from "@/lib/structured-data";
@@ -45,6 +46,9 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       className={`${geistSans.variable} ${geistMono.variable}`}
     >
       <body className="flex min-h-screen flex-col">
+        {/* One delegated listener for the whole app (README §24). */}
+        <AnalyticsClicks />
+
         {/* Theme-independent machine-readable identity (README §16). */}
         <JsonLd data={personJsonLd()} />
         <JsonLd data={websiteJsonLd()} />

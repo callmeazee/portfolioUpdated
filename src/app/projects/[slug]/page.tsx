@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { getProjectBySlug } from "@/content";
+import { TrackView } from "@/components/shared/Analytics";
 import { JsonLd } from "@/components/shared/JsonLd";
 import { createSeoMetadata } from "@/lib/seo";
 import { projectJsonLd } from "@/lib/structured-data";
@@ -47,6 +48,7 @@ export default async function ProjectPage(props: PageProps<"/projects/[slug]">) 
   return (
     <>
       <JsonLd data={projectJsonLd(project.slug)} />
+      <TrackView event="case_study_viewed" props={{ slug: project.slug }} />
       <ProjectDetail project={project} />
     </>
   );

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 
+import { ContactForm } from "@/components/shared/ContactForm";
 import { contact } from "@/content";
 import { createSeoMetadata } from "@/lib/seo";
 import { getPageKit } from "@/themes/page-kit";
@@ -52,6 +53,17 @@ export default async function ContactPage() {
           <DefinitionList items={channels} />
         )}
       </Section>
+
+      {/*
+        The form appears only when a mail provider is configured. Rendering it
+        without one would accept messages and drop them, which is worse than
+        pointing at an address that works (README §23).
+      */}
+      {process.env.RESEND_API_KEY && contact.email ? (
+        <Section id="message" title="Send a message">
+          <ContactForm email={contact.email} />
+        </Section>
+      ) : null}
 
       <Section id="resume" title="Résumé">
         <Action href="/resume">Résumé</Action>

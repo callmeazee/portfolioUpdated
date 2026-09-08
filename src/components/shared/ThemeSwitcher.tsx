@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 
+import { track } from "@/lib/analytics";
 import { setThemePreference } from "@/themes/actions";
 import { THEME_QUERY_PARAM } from "@/themes/resolve";
 import type { ThemeConfig, ThemeId } from "@/types/theme";
@@ -41,6 +42,9 @@ export function ThemeSwitcher({
 
   function selectTheme(id: ThemeId) {
     if (id === active) return;
+
+    /* README §24 — which theme do visitors actually prefer? */
+    track("theme_changed", { from: active, to: id });
 
     /*
      * A `?theme=` in the current URL outranks the cookie (theme.md §3), so

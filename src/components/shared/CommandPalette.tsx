@@ -11,6 +11,7 @@ import {
   useTransition,
 } from "react";
 
+import { track } from "@/lib/analytics";
 import { setThemePreference } from "@/themes/actions";
 import type { ThemeId } from "@/types/theme";
 
@@ -116,6 +117,9 @@ export function CommandPalette({ commands }: { commands: PaletteCommand[] }) {
 
   function run(command: PaletteCommand) {
     close();
+
+    if (command.kind === "theme") track("theme_changed", { to: command.value });
+    if (command.kind === "external") track("github_clicked", { url: command.value });
 
     if (command.kind === "navigate") {
       router.push(command.value);

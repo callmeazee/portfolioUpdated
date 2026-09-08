@@ -760,6 +760,39 @@ Two other links appeared fine only because the page could not scroll further. Fi
 `scroll-margin-top` on anchor targets, with a regression test that measures the landing
 position against the header height.
 
+### 2026-09-08 — Analytics, contact form and notes feed
+
+All three built, each with a design decision worth recording.
+
+**Analytics is first-party and anonymous.** Events post to this application's own route, not
+to a third party. Nothing identifying is sent — no cookie, no device id, no IP stored, no
+cross-site anything — so there is nothing to consent to and the site needs no banner. The
+handler writes one structured line per event; on any host with log search that answers what
+README §24 asks. The event vocabulary is a TypeScript union, so a typo is a build error and
+the list cannot sprawl; the route rejects anything outside it rather than logging it.
+
+Click tracking is a **single delegated listener** that classifies by `href`. The alternative
+— a tracked-link component — would have meant editing every link in four themes and pulling
+server components into the client bundle. This way the themes are untouched, and a link
+added later is tracked without anyone remembering to instrument it. Do Not Track and Global
+Privacy Control are honoured regardless.
+
+**The contact form only exists when it can deliver.** Without `RESEND_API_KEY` the form is
+not rendered and the route returns 503 — a form that accepts a message and drops it is worse
+than none, because the sender leaves believing they have been in touch. Delivery is a single
+`fetch` to Resend's REST API rather than its SDK: one HTTP call does not justify a
+dependency (CLAUDE.md §35). Validation, a honeypot answered with 200 so bots do not retry,
+and in-memory rate limiting at three per hour cover README §23. Provider failures are logged
+server-side and never surfaced to the sender.
+
+**Notes gained an RSS feed** — a writing section that cannot be followed is half-built. It is
+generated from the content layer rather than a file, so a note cannot exist on the site and
+be missing from the feed, and it is discoverable through `<link rel="alternate">` and listed
+in the sitemap. Published now so the URL is stable before there is anything to read.
+
+Eight new tests cover all three, including the default that matters most: unconfigured, the
+contact form is absent.
+
 ## Rules
 After every meaningful session, update completed work, current phase, blockers, decisions
 and meaningful changes. Never mark work complete without verification.

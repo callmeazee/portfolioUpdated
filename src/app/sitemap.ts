@@ -18,6 +18,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/notes",
     "/contact",
     "/resume",
+    "/notes/rss.xml",
   ];
 
   const projectRoutes = getProjectSlugs().map((slug) => `/projects/${slug}`);
