@@ -21,7 +21,8 @@ export const movieplas: Project = {
 
   links: {
     live: { status: "available", url: "https://movieplas-web.onrender.com" },
-    repository: { status: "pending" },
+    /* Verified by content: `render.yaml` plus frontend/backend, matching the Render deploy. */
+    repository: { status: "available", url: "https://github.com/callmeazee/movieplas" },
   },
 
   media: {

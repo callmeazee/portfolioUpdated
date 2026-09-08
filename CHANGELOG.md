@@ -5,6 +5,9 @@ Record meaningful changes to the project.
 ## 2026-09-02
 
 ### Added
+- **Verified repository links** for Snitcher, FileMoon Cloud and MoviePlas, each confirmed
+  against repo metadata or contents rather than matched by name.
+- **`/resume` renders the résumé** from the content layer, with print styles.
 - **Generated favicon** (`app/icon.tsx`) replacing the Create Next App default.
 
 ### Changed

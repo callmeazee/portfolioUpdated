@@ -31,6 +31,11 @@ export const connectverse: Project = {
 
   links: {
     live: { status: "available", url: "https://connectverse-5fl1.onrender.com" },
+    /*
+     * No public repository found under github.com/callmeazee as of 2026-09-08.
+     * Kept `pending` rather than `unavailable`: it may simply be private, and
+     * the two states make different claims (ADR-011).
+     */
     repository: { status: "pending" },
   },
 

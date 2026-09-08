@@ -22,7 +22,8 @@ export const filemoon: Project = {
 
   links: {
     live: { status: "available", url: "https://filemooncloud.onrender.com" },
-    repository: { status: "pending" },
+    /* Verified by content: package name `filemoon`, with Cloudinary, Express and bcrypt. */
+    repository: { status: "available", url: "https://github.com/callmeazee/filemooncloud" },
   },
 
   media: {

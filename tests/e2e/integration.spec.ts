@@ -89,13 +89,21 @@ for (const theme of THEMES) {
       await expect(page).toHaveTitle(/ConnectVerse/);
     });
 
-    test(`the résumé is reachable from every theme (content.md §37)`, async ({ page }) => {
+    test(`the résumé is reachable and carries real content (content.md §37)`, async ({ page }) => {
       await withTheme(page, theme);
-      await page.goto("/");
-
-      /* Not necessarily in the nav, but always reachable by link. */
       await page.goto("/resume");
+
       await expect(page.getByRole("heading", { level: 1 })).toContainText("sum");
+
+      /*
+       * Rendered from the content layer rather than linking a PDF, so it must
+       * actually contain the résumé — experience, skills, projects, education.
+       */
+      const main = page.locator("#main");
+      await expect(main).toContainText("Affy Cloud");
+      await expect(main).toContainText("Redux Toolkit");
+      await expect(main).toContainText("Snitcher");
+      await expect(main).toContainText("RGPV");
     });
   });
 }

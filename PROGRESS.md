@@ -626,6 +626,35 @@ defect — a `lastmod` that changes every request tells crawlers nothing. It is 
 is prerendered, so the value is baked at build time and stable across requests. Verified by
 fetching twice rather than assumed either way. Left alone.
 
+### 2026-09-08 — Repository links verified; the résumé is a page, not a missing file
+
+**Repository links (ISS-034) resolved by verification rather than name matching.** The
+public GitHub account lists 52 repositories, most of them practice work. Three match:
+
+- `snitcher` — **confirmed** by its repo `homepage` field being exactly the live URL.
+- `filemooncloud` — confirmed by content: package name `filemoon`, with Cloudinary,
+  Express and bcrypt.
+- `movieplas` — confirmed by content: `render.yaml` plus frontend/backend, matching the
+  Render deployment.
+
+A name match alone would not have been enough; a wrong repository link on a portfolio is
+worse than none. CloudSpire, ConnectVerse and Besties have no public repository under that
+account and stay `pending`, not `unavailable` — they may simply be private.
+
+**`/resume` (ISS-030) now renders the résumé** from the content layer — contact, experience,
+skills, projects, education — instead of an empty state waiting for a PDF. That keeps it in
+step with the rest of the site by construction: there is no second copy to drift, and it is
+printable, linkable and screen-reader readable, which a PDF is not. A download link still
+appears if `contact.resume.url` is set.
+
+Print styles were added with it, because a résumé that prints badly is not a résumé: theme
+chrome is hidden, colours forced to black on white (every theme's palette is custom
+properties, so a dark theme would otherwise print as solid ink), and link targets shown
+after their text.
+
+The integration test now asserts the résumé *contains* the résumé rather than merely having
+the right heading.
+
 ## Rules
 After every meaningful session, update completed work, current phase, blockers, decisions
 and meaningful changes. Never mark work complete without verification.

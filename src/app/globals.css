@@ -298,3 +298,59 @@
     transform: scaleX(1);
   }
 }
+
+/*
+ * PRINT
+ *
+ * The résumé is rendered from the content layer rather than linked as a PDF, so
+ * printing it has to produce something usable. Theme chrome — docks, sidebars,
+ * switchers, marquees — is navigation and carries nothing on paper.
+ *
+ * Colours are forced to black on white because every theme's palette is set
+ * through custom properties, and a dark theme would otherwise print as a solid
+ * block of ink.
+ */
+@media print {
+  header,
+  footer,
+  nav,
+  aside,
+  .skip-link,
+  .brutal-marquee-track {
+    display: none !important;
+  }
+
+  :root {
+    --color-background: #ffffff;
+    --color-surface: #ffffff;
+    --color-surface-secondary: #ffffff;
+    --color-foreground: #000000;
+    --color-muted: #333333;
+    --color-border: #cccccc;
+    --shadow-sm: none;
+    --shadow-md: none;
+    --shadow-lg: none;
+  }
+
+  body {
+    background: #ffffff;
+    color: #000000;
+  }
+
+  main {
+    padding: 0 !important;
+  }
+
+  /* Show link targets, which are otherwise lost on paper. */
+  main a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.75em;
+    color: #333333;
+  }
+
+  h1,
+  h2,
+  h3 {
+    break-after: avoid;
+  }
+}

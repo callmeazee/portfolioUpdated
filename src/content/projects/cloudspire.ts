@@ -32,6 +32,11 @@ export const cloudspire: Project = {
   links: {
     live: { status: "available", url: "https://cloudspire-ai.vercel.app" },
     /* Not listed on the résumé; see ISS-003. */
+    /*
+     * No public repository found under github.com/callmeazee as of 2026-09-08.
+     * Kept `pending` rather than `unavailable`: it may simply be private, and
+     * the two states make different claims (ADR-011).
+     */
     repository: { status: "pending" },
   },
 

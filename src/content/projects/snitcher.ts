@@ -25,7 +25,8 @@ export const snitcher: Project = {
 
   links: {
     live: { status: "available", url: "https://snitcher-six.vercel.app" },
-    repository: { status: "pending" },
+    /* Verified: the repository's `homepage` field is exactly the live URL above. */
+    repository: { status: "available", url: "https://github.com/callmeazee/snitcher" },
   },
 
   media: {
